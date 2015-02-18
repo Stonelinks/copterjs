@@ -24,7 +24,7 @@ var LogView = Marionette.CollectionView.extend({
 		if (this.collection.length > 1000) {
 			this.collection.shift();
 		}
-		if (this.tail) {
+		if (this.tail && this.el.parentElement) {
 			var elem = this.el.parentElement;
 			elem.scrollTop = elem.scrollHeight;
 		}

@@ -22,7 +22,6 @@ var Router = Marionette.AppRouter.extend({
 		var ConsoleView = require('./view/console');
 		app.getRegion('content').show(new ConsoleView());
 	}
-
 });
 
 // open the socket
