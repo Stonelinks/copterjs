@@ -27,7 +27,7 @@ var Router = Marionette.AppRouter.extend({
 // open the socket
 app.addInitializer(function(opts) {
 	console.log("opening socket");
-	this.socket = io('http://localhost:4545');
+	this.socket = io();
 }.bind(app));
 
 // start the router
