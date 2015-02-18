@@ -22,6 +22,7 @@
     "vinyl-transform": "^1.0.0"
   },
   "dependencies": {
-    "express": "^4.11.2"
+    "express": "^4.11.2",
+    "serialport": "^1.5.0"
   }
 }
