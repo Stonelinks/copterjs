@@ -35,7 +35,7 @@ gulp.task('js', function() {
 			.pipe(source(package.name + "." + package.version + '.min.js'))
 			.pipe(buffer())
 			.pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(uglify())
+			//.pipe(uglify())
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest('./build/js/'));
 	};
@@ -45,7 +45,7 @@ gulp.task('js', function() {
 gulp.task('style', function() {
 	gulp.src(path.style)
 		.pipe(less({
-	      paths: [ path.style + '/includes' ]
+	      paths: [ './node_modules/bootstrap/less' ]
 	    }))
     .pipe(gulp.dest('./build/style'));
 

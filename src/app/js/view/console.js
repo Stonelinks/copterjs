@@ -1,13 +1,14 @@
-var Marionette = require('backbone.marionette');
+var Marionette 	= require('backbone.marionette');
+var	LogView		= require('./log');
 
 var ConsoleView	= Marionette.ItemView.extend({
-	template: false,
+	template: require('../../tmpl/console.hbs'),
 
-	render: function() {
-		this.$el.html('console');
+	onRender: function() {
+		this.logView = new LogView();
+		this.logView.render();
+		this.$el.find('#log').html(this.logView.$el);
 	}
-
-
 });
 
 module.exports = ConsoleView;
