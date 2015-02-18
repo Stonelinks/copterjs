@@ -16,6 +16,7 @@ var ConsoleView	= Marionette.ItemView.extend({
 				y: 0,
 				z: 0
 			},
+			step: 0.001,
 			max: Math.PI,
 			min: -Math.PI
 		});
