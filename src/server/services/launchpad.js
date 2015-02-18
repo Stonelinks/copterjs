@@ -84,3 +84,5 @@ var Launchpad = function(port) {
     }
   };
 };
+
+module.exports = Launchpad;

@@ -2,7 +2,7 @@ var $			= require('jquery');
 var Backbone	= require('backbone');
 var io			= require('socket.io-client');
 Backbone.$ = $;
-var Marionette 	= require('backbone.Marionette');
+var Marionette 	= require('backbone.marionette');
 
 
 var app = new Marionette.Application();
@@ -28,7 +28,7 @@ var Router = Marionette.AppRouter.extend({
 // open the socket
 app.addInitializer(function(opts) {
 	console.log("opening socket");
-	this.socket = io('http://localhost:4545');
+	this.socket = io();
 }.bind(app));
 
 // start the router
