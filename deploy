@@ -1,5 +1,5 @@
 #!/bin/bash
-
+npm i
 gulp build
 rsync -avz --rsh="ssh -i id_rsa" --exclude 'node_modules' --exclude '.git' . ssh -i id_rsa root@192.168.1.5:/root/copterjs
 ssh -i id_rsa root@192.168.1.5 /bin/bash << EOF
@@ -13,5 +13,5 @@ else
   echo "forever is not running"
 fi
 
-forever start /root/copterjs/src/server/index.js
+forever start --uid "copter" -a /root/copterjs/src/server/index.js
 EOF

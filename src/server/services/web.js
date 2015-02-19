@@ -12,10 +12,11 @@ function WebService() {
 	// setup socketio
 	this.server = require('http').Server(this.app);
 	var mosca = require('mosca');
-   	mqttServ = new mosca.Server({});
+  mqttServ = new mosca.Server({});
+  mqttServ.on('clientConnected', function(client) {
+    console.log(client.id + ' connected')
+  })
 	mqttServ.attachHttpServer(this.server);
-
-
 	this.messages = require('../messages.json');
 };
 

@@ -41,7 +41,7 @@ var ConsoleView	= Marionette.ItemView.extend({
 		}
 
 		var client = require('mqtt').connect();
-		client.subscribe('vehicle/sensor/#');
+		client.subscribe('vehicle/sensor/gyro');
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());

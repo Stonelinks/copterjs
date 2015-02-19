@@ -20,11 +20,12 @@ CopterService.prototype.start = function() {
 		console.log(data.raw);
 	}, 5000).bind(this)
   
-	var updateSocket = _.throttle(function(data) {
+  
+	var updateSocket = function(data) {
 		this.client.publish('vehicle/log/trace', data.raw);
-		this.socket.emit('vehicle/sensor/gyro', data.gyro);
-		this.socket.emit('vehicle/sensor/accel', data.accel);
-	}, 50).bind(this)
+		this.client.publish('vehicle/sensor/gyro', data.gyro);
+		this.client.publish('vehicle/sensor/accel', data.accel);
+	}.bind(this)
 
 	var launchpad = new Launchpad()
 	if (launchpad.serial) {

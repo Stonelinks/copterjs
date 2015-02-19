@@ -12,9 +12,7 @@ var gulp 		= require('gulp'),
 	buffer = require('vinyl-buffer'),
 	transform 	= require('vinyl-transform'),
 	source = require('vinyl-source-stream'),
-	nodemon	= require('gulp-nodemon'),
-  scp = require('gulp-scp2');
-
+	nodemon	= require('gulp-nodemon')
 
 var path = {
 	tmpl: './src/app/tmpl/**/*.hbs',
