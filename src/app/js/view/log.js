@@ -17,9 +17,9 @@ var LogView = Marionette.CollectionView.extend({
 		this.collection = new Backbone.Collection();
 
 		var client = require('mqtt').connect();
-		client.subscribe('vehicle/log');
+		client.subscribe('vehicle/log/+');
 		client.on('message', function(topic, payload) {
-			this.collection.add(new Backbone.Model({msg: msg}));
+			this.collection.add(new Backbone.Model({msg: payload}));
 		}.bind(this));
 	},
 

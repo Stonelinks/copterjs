@@ -45,6 +45,7 @@ var ConsoleView	= Marionette.ItemView.extend({
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());
+				gyroModel.set({value: data});
 				charts.x.addPoint(data.x);
 				charts.y.addPoint(data.y);
 				charts.z.addPoint(data.z);
