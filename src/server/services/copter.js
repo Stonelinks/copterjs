@@ -22,6 +22,10 @@ CopterService.prototype.start = function() {
     this.socket.emit('accel', data.accel);
   }, 50).bind(this)
 
+  this.socket.emit('controls', function(data) {
+  	console.log(data);
+  });
+
 	launchpad.serial.on('data', function(data) {
 		consoleLog(data)
 		updateSocket(data)
