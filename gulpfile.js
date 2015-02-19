@@ -80,6 +80,7 @@ gulp.task('build', ['js', 'style', 'index']);
 gulp.task('watch', ['build'], function() {
 	gulp.watch(path.js, ['js']);
 	gulp.watch(path.style, ['style']);
+	gulp.watch(path.tmpl, ['js']);
 	gulp.watch(path.index, ['index']);
 });
 

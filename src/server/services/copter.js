@@ -23,8 +23,8 @@ CopterService.prototype.start = function() {
   
 	var updateSocket = function(data) {
 		this.client.publish('vehicle/log/trace', data.raw);
-		this.client.publish('vehicle/sensor/gyro', data.gyro);
-		this.client.publish('vehicle/sensor/accel', data.accel);
+		this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
+		this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
 	}.bind(this)
 
 	var launchpad = new Launchpad()
@@ -33,6 +33,22 @@ CopterService.prototype.start = function() {
 			consoleLog(data)
 			updateSocket(data)
 		}.bind(this));
+	} else {
+		setInterval(function() {
+			updateSocket({
+				raw: 'raw data',
+				gyro: {
+					x: Math.random(),
+					y: Math.random(),
+					z: Math.random()
+				},
+				accel: {
+					x: Math.random(),
+					y: Math.random(),
+					z: Math.random()
+				}
+			})
+		}, 250);
 	}
 };
 
@@ -43,6 +59,7 @@ CopterService.prototype.setupMqtt = function(topics) {
 	for (var topic in topics) {
 		client.subscribe(topic);
 	}
+	client.publish('vehicle/sensor/accel', {x: Math.random(), y: Math.random(), z: Math.random()});
 
   	client.on('message', function(topic, payload) {
   		if (topics[topic]) {
