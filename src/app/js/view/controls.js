@@ -1,5 +1,5 @@
-var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone'),
+var Marionette 		= require('backbone.marionette');
+	Backbone 		= require('backbone'),
 	JoystickView	= require('./joystick');
 
 var ControlsView = Marionette.ItemView.extend({
@@ -18,18 +18,23 @@ var ControlsView = Marionette.ItemView.extend({
 			model: joystickModelRight
 		}).render();
 
+		var client = require('mqtt').connect();
+		client.subscribe('presence');
+		client.on('message', function(topic, payload) {
+			console.log(topic);
+			console.log(payload.toString());
+		});
 		var sendControls = function() {
-			window.app.socket.emit('controls', {
+			client.publish('vehicle/controls', JSON.stringify({
 				yaw: joystickModelLeft.get('x'),
 				throttle: joystickModelLeft.get('y'),
 				pitch: joystickModelRight.get('y'),
 				roll: joystickModelRight.get('x'),
-			});
+			}), {qos: 2});
 		}
 
 		joystickModelLeft.on("change", sendControls);
 		joystickModelRight.on("change", sendControls);
-
 	}
 });
 

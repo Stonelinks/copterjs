@@ -11,8 +11,10 @@ function WebService() {
 
 	// setup socketio
 	this.server = require('http').Server(this.app);
-	this.io = require('socket.io')(this.server);
-	this.io.on('connection', this.onConnection.bind(this));
+	var mosca = require('mosca');
+   	mqttServ = new mosca.Server({});
+	mqttServ.attachHttpServer(this.server);
+
 
 	this.messages = require('../messages.json');
 };
@@ -29,14 +31,6 @@ WebService.prototype.start = function() {
 	this.server.listen(4545, function() {
 		console.log("Webserver started");
 	}.bind(this));
-};
-
-WebService.prototype.onConnection = function(socket) {
-	_.each(this.messages, function(name) {
-		socket.on(name, function(msg) {
-			socket.broadcast.emit(name, msg);
-		});
-	})
 };
 
  module.exports = WebService;

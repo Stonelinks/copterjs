@@ -30,12 +30,6 @@ var Router = Marionette.AppRouter.extend({
 	}
 });
 
-// open the socket
-app.addInitializer(function(opts) {
-	console.log("opening socket");
-	this.socket = io();
-}.bind(app));
-
 // start the router
 app.addInitializer(function(opts) {
 	this.router = new Router();
