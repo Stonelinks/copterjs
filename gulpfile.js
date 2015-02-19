@@ -13,6 +13,7 @@ var gulp 		= require('gulp'),
 	transform 	= require('vinyl-transform'),
 	source = require('vinyl-source-stream'),
 	nodemon	= require('gulp-nodemon');
+  
 
 
 var path = {
@@ -85,6 +86,15 @@ gulp.task('watch', ['build'], function() {
 	gulp.watch(path.index, ['index']);
 });
 
+gulp.task('deploy', function() {
+  gulp.src('.')
+    .pipe(rsync({
+      root: '.',
+      username: 'root',
+      hostname: '192.168.1.5',
+      destination: '~/copterjs'
+    }));
+});
 
 gulp.task('develop', ['watch', 'webserver']);
 

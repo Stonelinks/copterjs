@@ -19,7 +19,7 @@ var LaunchpadParser = function() {
       partArray = part.split(lineDelimiter);
       emitter.emit('data', {
         raw: part,
-        rate: {
+        gyro: {
           x: parseFloatFromSerial(partArray[1]),
           y: parseFloatFromSerial(partArray[2]),
           z: parseFloatFromSerial(partArray[3])
@@ -39,6 +39,7 @@ var Launchpad = function(port) {
   var self = this;
 
   var opened = false;
+  var samplingFrequency = 100.0
 
   var serial = this.serial = new serialPort.SerialPort(port, {
     baudrate: 115200,
