@@ -39,7 +39,6 @@ var Launchpad = function(port) {
   var self = this;
 
   var opened = false;
-  var samplingFrequency = 100.0
 
   var serial = this.serial = new serialPort.SerialPort(port, {
     baudrate: 115200,
@@ -73,6 +72,8 @@ var Launchpad = function(port) {
       _write();
     }
   };
+
+  this.samplingFrequency = 0.0
 
   this.close = function(cb) {
     cb = cb || function() {};

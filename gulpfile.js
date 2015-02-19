@@ -12,8 +12,8 @@ var gulp 		= require('gulp'),
 	buffer = require('vinyl-buffer'),
 	transform 	= require('vinyl-transform'),
 	source = require('vinyl-source-stream'),
-	nodemon	= require('gulp-nodemon');
-  
+	nodemon	= require('gulp-nodemon'),
+  scp = require('gulp-scp2');
 
 
 var path = {
@@ -72,7 +72,6 @@ gulp.task('webserver', function() {
   });
 });
 
-
 gulp.task('clean', function() {
 	return gulp.src('./build')
 		.pipe(clean());
@@ -84,16 +83,6 @@ gulp.task('watch', ['build'], function() {
 	gulp.watch(path.js, ['js']);
 	gulp.watch(path.style, ['style']);
 	gulp.watch(path.index, ['index']);
-});
-
-gulp.task('deploy', function() {
-  gulp.src('.')
-    .pipe(rsync({
-      root: '.',
-      username: 'root',
-      hostname: '192.168.1.5',
-      destination: '~/copterjs'
-    }));
 });
 
 gulp.task('develop', ['watch', 'webserver']);
