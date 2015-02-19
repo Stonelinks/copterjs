@@ -1,4 +1,3 @@
-var io = require('socket.io-client');
 var Launchpad = require('./launchpad');
 var mqtt    = require('mqtt');
 var _ = require('lodash');

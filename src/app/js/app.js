@@ -1,6 +1,5 @@
 var $			= require('jquery');
 var Backbone	= require('backbone');
-var io			= require('socket.io-client');
 Backbone.$ = $;
 var Marionette 	= require('backbone.marionette');
 
