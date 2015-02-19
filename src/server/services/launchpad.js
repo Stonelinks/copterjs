@@ -1,4 +1,5 @@
 var serialPort = require('serialport');
+var fs = require('fs');
 
 var LaunchpadParser = function() {
   var newLinedelimiter = '\r\n';
@@ -36,6 +37,12 @@ var LaunchpadParser = function() {
 
 var Launchpad = function(port) {
   port = port || '/dev/ttyACM0';
+
+  if (!fs.existsSync(port)) {
+    console.log("Could not find serial port!")
+    return;
+  }
+
   var self = this;
 
   var opened = false;

@@ -40,10 +40,15 @@ var ConsoleView	= Marionette.ItemView.extend({
 			this.$el.find("#strips").append(charts[axis].$el);
 		}
 
-		window.app.socket.on('gyro', function(data) {
-			charts.x.addPoint(data.x);
-			charts.y.addPoint(data.y);
-			charts.z.addPoint(data.z);
+		var client = require('mqtt').connect();
+		client.subscribe('vehicle/sensor/#');
+		client.on('message', function(topic, payload) {
+			if (topic === "vehicle/sensor/gyro") {
+				var data = JSON.parse(payload.toString());
+				charts.x.addPoint(data.x);
+				charts.y.addPoint(data.y);
+				charts.z.addPoint(data.z);
+			}
 		});
 	}
 });
