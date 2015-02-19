@@ -15,12 +15,18 @@ app.addRegions({
 var Router = Marionette.AppRouter.extend({
 
 	routes: {
-		'console' : 'showConsole'
+		'console' : 'showConsole',
+		'controls' : 'showControls'
 	},
 
 	showConsole: function() {
 		var ConsoleView = require('./view/console');
 		app.getRegion('content').show(new ConsoleView());
+	},
+
+	showControls: function() {
+		var ControlsView = require('./view/controls');
+		app.getRegion('content').show(new ControlsView());
 	}
 });
 
