@@ -1,12 +1,14 @@
 #!/bin/bash
 
-rsync -avz --rsh="ssh -i id_rsa" --exclude 'node_modules' . ssh -i id_rsa root@192.168.1.5:/root/copterjs
+gulp build
+rsync -avz --rsh="ssh -i id_rsa" --exclude 'node_modules' --exclude '.git' . ssh -i id_rsa root@192.168.1.5:/root/copterjs
 ssh -i id_rsa root@192.168.1.5 /bin/bash << EOF
 cd /root/copterjs
 npm i
 if ps ax | grep -v grep | grep forever > /dev/null
 then
-  echo "forever is running, everything is fine"
+  echo "forever is running, restart"
+  forever restart /root/copterjs/src/server/index.js
 else
   echo "forever is not running"
   forever start /root/copterjs/src/server/index.js
