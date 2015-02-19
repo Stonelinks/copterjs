@@ -34,7 +34,6 @@ WebService.prototype.start = function() {
 WebService.prototype.onConnection = function(socket) {
 	_.each(this.messages, function(name) {
 		socket.on(name, function(msg) {
-			console.log("%s: %s", name, msg);
 			socket.broadcast.emit(name, msg);
 		});
 	})
