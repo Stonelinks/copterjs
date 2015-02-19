@@ -7,10 +7,11 @@ cd /root/copterjs
 npm i
 if ps ax | grep -v grep | grep forever > /dev/null
 then
-  echo "forever is running, restart"
-  forever restart /root/copterjs/src/server/index.js
+  echo "forever is running, kill it and restart anyway"
+  killall node
 else
   echo "forever is not running"
-  forever start /root/copterjs/src/server/index.js
 fi
+
+forever start /root/copterjs/src/server/index.js
 EOF
