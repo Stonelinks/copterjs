@@ -1,27 +1,24 @@
 var Marionette 	= require('backbone.marionette');
 	Backbone 	= require('backbone'),
-	d3			= require('d3');
+	smoothie	= require('smoothie');
 
 var LiveChart = Marionette.ItemView.extend({
 	template: false,
+	tagName: "canvas",
+	className: "liveChart",
+
+	initialize: function() {
+		this.chart = new smoothie.SmoothieChart();
+		this.series = new smoothie.TimeSeries();
+        this.chart.addTimeSeries(this.series, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
+	},
 
 	onRender: function() {
-		/*
-		var valueline = d3.svg.line()
-    		.x(function(d) { return x(d.date); })
-    		.y(function(d) { return y(d.close); });
-*/
-		var n = 40, random = d3.random.normal(0, .2);
-	  	var data = d3.range(n).map(random);
+		this.chart.streamTo(this.el, 500);
+	},
 
-	  	console.log(data);
-/*
-		this.svg = d3.select(this.el)
-						.append('svg');
-		this.path = this.svg
-						.append('path')
-						.attr('class', 'line')
-						.attr("d", valueline);*/
+	addPoint: function(value) {
+		this.series.append(new Date().getTime(), value);
 	}
 });
 

@@ -1,6 +1,7 @@
 var Marionette 	= require('backbone.marionette');
 var	LogView		= require('./log');
 var ThreeDSliderView = require('./3dSlider');
+var LiveChart 	= require('./liveChart');
 
 var ConsoleView	= Marionette.ItemView.extend({
 	template: require('../../tmpl/console.hbs'),
@@ -27,9 +28,23 @@ var ConsoleView	= Marionette.ItemView.extend({
 		gyroSlider.render();
 		this.$el.find("#gyro").html(gyroSlider.$el);
 
+
+		var charts = {
+			x: new LiveChart(),
+			y: new LiveChart(),
+			z: new LiveChart()
+		}
+
+		for (var axis in charts) {
+			charts[axis].render();
+			this.$el.find("#strips").append(charts[axis].$el);
+		}
+
 		window.app.socket.on('gyro', function(data) {
-			gyroModel.set('value', data);
-		})
+			charts.x.addPoint(data.x);
+			charts.y.addPoint(data.y);
+			charts.z.addPoint(data.z);
+		});
 	}
 });
 
