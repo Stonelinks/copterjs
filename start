@@ -1,0 +1,4 @@
+#!/bin/bash
+ssh -i id_rsa root@192.168.1.5 /bin/bash << EOF
+forever start --uid "copter" -a /root/copterjs/src/server/index.js
+EOF
