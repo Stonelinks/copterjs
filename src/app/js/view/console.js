@@ -74,8 +74,8 @@ var ConsoleView	= Marionette.ItemView.extend({
 
 		// attitude charts
     var attitudeChartOptions = {
-      min: -Math.PI,
-      max: Math.PI
+      min: -Math.PI / 2,
+      max: Math.PI / 2      
     }
 		var attitudeCharts = {
 			roll: new LiveChart(attitudeChartOptions),
