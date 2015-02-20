@@ -15,13 +15,16 @@ CopterService.prototype.start = function() {
 	//setTimeout(this.setupMqtt.bind(this), 1000);
 	console.log("copter server in start");
 
+	var launchpad = new Launchpad()
+
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
 	}, 1000).bind(this)
 
-	var socketLog = _.throttle(function(data) {
-		this.client.publish('vehicle/log/trace', data.raw);
-	}, 1000).bind(this)
+	var socketLog = function(data) {
+		this.client.publish('vehicle/log/trace', 'running for ' + data.uptime);
+		this.client.publish('vehicle/log/trace', 'event loop at ' + data.samplingDiff + 'Hz');
+	}.bind(this)
   
 	var updateSocket = _.throttle(function(data) {
     if (data.gyro) {
@@ -33,16 +36,26 @@ CopterService.prototype.start = function() {
     if (data.attitude) {
       this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
     }
+    this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
+      samplingDiff: launchpad.samplingDiff
+      }));
 	}, 30).bind(this)
 
-	var launchpad = new Launchpad()
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
-			socketLog(data)
 			updateSocket(data)
 		}.bind(this));
-	} else {
+		setInterval(function() {
+			var debugData = {
+        uptime: process.uptime(),
+        samplingDiff: launchpad.samplingDiff
+      }
+      console.log(debugData)
+      socketLog(debugData)
+    }, 1000)
+  }
+ else {
 		setInterval(function() {
 			updateSocket({
 				raw: 'raw data',

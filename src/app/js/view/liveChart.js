@@ -8,7 +8,6 @@ var LiveChart = Marionette.ItemView.extend({
 	className: "liveChart",
 
 	initialize: function(options) {
-    console.log(options)
     if (options.min && options.max) {
       this.chart = new smoothie.SmoothieChart({
         maxValue: options.max,

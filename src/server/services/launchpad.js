@@ -19,7 +19,7 @@ var LaunchpadParser = function() {
     data = parts.pop();
     parts.forEach(function(part) {
       partArray = part.split(lineDelimiter);
-      try {
+      // try {
         if (partArray[0] == 'i') {
           emitter.emit('data', {
             raw: part,
@@ -44,10 +44,11 @@ var LaunchpadParser = function() {
             }
           });
         }
-      }
-      catch (e) {
-        console.log('serial parser fucked up')
-      }
+
+      // }
+      // catch (e) {
+        // console.log('serial parser fucked up')
+      // }
     });
   };
 };
@@ -82,6 +83,7 @@ var Launchpad = function(port) {
     }
   };
   
+  
   this.write = function(s, cb) {
     cb = cb || function() {};
 
@@ -97,7 +99,12 @@ var Launchpad = function(port) {
     }
   };
 
-  this.samplingFrequency = 0.0
+  this.samplingDiff = 0.0
+  var time = process.hrtime();
+  serial.on('data', function() {
+    time = process.hrtime(time);
+    self.samplingDiff = (time[0] + time[1] / 1E9);
+  })
 
   this.close = function(cb) {
     cb = cb || function() {};
