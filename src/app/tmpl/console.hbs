@@ -1,47 +1,42 @@
-<div class="container-fluid">
-	<div class="row">
-		<div class="panel panel-default col-md-4">
-		  <div class="panel-heading">Logs</div>
-		  <div id="log" class="panel-body">
-		  </div>
-		</div>
-		<div class="panel panel-default col-md-4">
-			<div class="panel-heading">attitude</div>
-			<canvas id="attitude" width="300" height="300"/>
-		</div>
-		<div class="panel panel-default col-md-4">
-			<div class="panel-heading">Controls</div>
-			<img src="/qr" height="260"/>
-			<a href="/controls" class="btn btn-default" style="display: block; width: 100%;">controls</a>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-default>
-				<div class="panel-heading">
-					strip charts
-					<div class="btn-group pull-right">
-						<button class="btn btn-default">blah</button>
-						<!--select id="chart-selector" class="form-control" style="width: 100px">
-							<option>gyro</option>
-							<option>accel</option>
-						</select-->
-					</div>
+<div role="tabpanel" class="container-fluid">
+	<ul class="nav nav-tabs" role="tablist" id="tabs">
+	  <li role="presentation" class="active"><a href="#fly" role="tab" data-toggle="tab">Fly</a></li>
+	  <li role="presentation"><a href="#debug" role="tab" data-toggle="tab">Debug</a></li>
+	</ul>
+	<div class="tab-content" style="padding-top: 20px">
+		<div role="tabpanel" class="tab-pane fade in active" id="fly">
+			<div class="row">
+				<div class="col-md-6">
+					<img src="https://maps.googleapis.com/maps/api/staticmap?center=1045 Bryant, San Francisco&zoom=18&size=950x800&maptype=satellite
+&markers=color:blue%7Clabel:JS%7C37.771711,-122.407204"/>
 				</div>
-				<div id="gyro-strips" class="panel-body"></div>
+				<div class="default col-md-3">
+					<canvas id="attitude" width="300" height="300"/>
+				</div>
+				<div class="col-md-3" >
+					<div style="background: white; height: 280px; width: 280px; padding: 10px">
+						<img src="/qr" height="260" width="260"/>
+					</div>
+					<a href="/controls" class="btn btn-hollow" style="display: block; width: 280px; margin-top: 15px">controls</a>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="panel panel-default">
-			<div class="panel-heading">accel strip</div>
-			<div id="accel-strips" class="panel-body"></div>
+		<div role="tabpanel" class="tab-pane fade" id="debug">
+			<div class="row" style="height: 100%">
+				<div class="col-md-9" id="chart-holder">
+					<select id="strip-selector" class="pull-right form-control" style="margin-top: 20px; margin-right: 75px; width: 250px">
+						<option>Gyro</option>
+						<option>Accel</option>
+						<option>Attitude</option>
+					</select>
+					<h3 style="margin-left: 20px">Strip Charts</h3>
+					<div id="gyro-strips" class="panel-body"></div>
+				</div>
+				<div class="col-md-3" style="background: rbga(0,0,0,0.5); height: 100%">
+					<h3 style="margin-left: 20px">Logs</h3>
+					<div id="log"/>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="panel panel-default">
-		<div class="panel-heading"><b>Attitude</b> <code>(roll, pitch)</code></div>
-		<div id="attitude-strips" class="panel-body"></div>
 	</div>
 </div>

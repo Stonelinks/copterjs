@@ -1,5 +1,5 @@
-var Marionette = require('backbone.marionette');
-var	LogView	= require('./log');
+var Marionette 	= require('backbone.marionette');
+var	LogView		= require('./log');
 var ThreeDSliderView = require('./3dSlider');
 var LiveChart = require('./liveChart');
 var AttitudeView = require('./attitude');
@@ -8,6 +8,8 @@ var ConsoleView	= Marionette.ItemView.extend({
 	template: require('../../tmpl/console.hbs'),
 
 	onRender: function() {
+	    $('#myTab a:last').tab('show')
+
 		this.logView = new LogView();
 		this.logView.render();
 		this.$el.find('#log').html(this.logView.$el);
@@ -51,13 +53,39 @@ var ConsoleView	= Marionette.ItemView.extend({
 			x: new LiveChart(gyroChartOptions),
 			y: new LiveChart(gyroChartOptions),
 			z: new LiveChart(gyroChartOptions)
-		};
+		}
+		var width = this.$el.find('#chart-holder').width()-45;
 		for (var axis in gyroCharts) {
 			gyroCharts[axis].render();
-			this.$el.find('#gyro-strips').append(gyroCharts[axis].$el);
+			gyroCharts[axis].setWidth(width-45);
+			this.$el.find("#gyro-strips").append(gyroCharts[axis].$el);
 		}
 
+		this.$el.on('shown.bs.tab', function() {
+			var width = this.$el.find('#chart-holder').width()-45;
+			console.log('showing with width of: %s', width);	
+			for (var axis in gyroCharts) {
+				gyroCharts[axis].setWidth(width-45);
+			}
+		}.bind(this));
+		$(window).resize(function(e) {
+			var width = this.$el.find('#chart-holder').width()-45;
+			for (var axis in gyroCharts) {
+				gyroCharts[axis].setWidth(width-45);
+			}
+		}.bind(this))
+
+		var selectedStrip = 'gyro';
+		this.$el.find("#strip-selector").change(function(e) {
+			selectedStrip = e.target.value.toLowerCase();
+			for (var axis in gyroCharts) {
+				gyroCharts[axis].clear();
+			}
+		});
+
+
 		// accel charts
+		/*
     var accelChartOptions = {
       min: -10,
       max: 10
@@ -86,28 +114,44 @@ var ConsoleView	= Marionette.ItemView.extend({
 			this.$el.find('#attitude-strips').append(attitudeCharts[axis].$el);
 		}
 
+		// launchpad debug charts
+		var launchpadDebugCharts = {
+			delay: new LiveChart({
+        min: 0,
+        max: 10000
+      })
+		}
+		for (var axis in launchpadDebugCharts) {
+			launchpadDebugCharts[axis].render();
+			this.$el.find("#launchpad-debug-strips").append(launchpadDebugCharts[axis].$el);
+		}
+*/
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/sensor/+');
 		client.subscribe('vehicle/attitude');
 
 		client.on('message', function(topic, payload) {
-			if (topic === 'vehicle/sensor/gyro') {
+			if (topic === "vehicle/sensor/gyro" && selectedStrip === 'gyro') {
 				var data = JSON.parse(payload.toString());
 				gyroCharts.x.addPoint(data.x);
 				gyroCharts.y.addPoint(data.y);
 				gyroCharts.z.addPoint(data.z);
 			}
-			if (topic === 'vehicle/sensor/accel') {
+			if (topic === "vehicle/sensor/accel" && selectedStrip === 'accel') {
 				var data = JSON.parse(payload.toString());
-				accelCharts.x.addPoint(data.x);
-				accelCharts.y.addPoint(data.y);
-				accelCharts.z.addPoint(data.z);
+				gyroCharts.x.addPoint(data.x);
+				gyroCharts.y.addPoint(data.y);
+				gyroCharts.z.addPoint(data.z);
 			}
-			if (topic === 'vehicle/attitude') {
+			if (topic === "vehicle/attitude" && selectedStrip === 'attitude') {
 				var data = JSON.parse(payload.toString());
 				attitudeModel.set(data);
-				attitudeCharts.roll.addPoint(data.roll);
-				attitudeCharts.pitch.addPoint(data.pitch);
+				gyroCharts.x.addPoint(data.pitch);
+				gyroCharts.z.addPoint(data.roll);
+			}
+			if (topic === "vehicle/sensor/launchpadDiagnostics") {
+				var data = JSON.parse(payload.toString());
+			//	launchpadDebugCharts.delay.addPoint(data.samplingDiff);
 			}
 		});
 	}

@@ -8,7 +8,7 @@ var timing = {
   sensorThrottle: 50,
   attitudeThrottle: 50,
   fakeDataInterval: 250,
-  controlsLogInterval: 800,
+  controlsLogInterval: 500,
   writerInterval: 20
 };
 
@@ -99,6 +99,9 @@ CopterService.prototype.publishAttitude = _.throttle(function(data) {
 CopterService.prototype.startControlsLog = function() {
   setInterval(function() {
     console.log(this.controls);
+    this.publish({
+    	'vehicle/log/trace' : this.controls
+    })
   }.bind(this), timing.controlsLogInterval);
 };
 
@@ -139,7 +142,7 @@ CopterService.prototype.startGenerateFakeData = function() {
       }
     };
 
-    console.log('sending fake data to browser');
+    //console.log('sending fake data to browser');
     this.publishSensors.call(this, fakeData);
     this.publishAttitude.call(this, fakeData);
   }.bind(this), timing.fakeDataInterval);

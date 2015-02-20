@@ -43,7 +43,7 @@ var AttitudeView = Marionette.ItemView.extend({
 	},
 
 	setAttitude: function() {
-		console.log(this.model.toJSON());
+		//console.log(this.model.toJSON());
 		this.sphere.rotation.x = this.model.get('pitch');
 		//this.sphere.rotation.y = this.model.get('yaw');
 		this.sphere.rotation.z = this.model.get('roll');
