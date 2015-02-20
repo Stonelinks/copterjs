@@ -22,7 +22,7 @@ var motorControllerGains = {
 
 function CopterService() {
   this.controlInput = {
-    yaw: 127,Q
+    yaw: 127,
     pitch: 127,
     roll: 127,
     throttle: 127
@@ -145,9 +145,9 @@ CopterService.prototype.publishAttitudeData = _.throttle(function() {
 
 CopterService.prototype.startControlsLog = function() {
   setInterval(function() {
-    console.log(this.controls);
+    console.log(this.controlInput);
     this.publish({
-    	'vehicle/log/trace' : this.controls
+    	'vehicle/log/trace' : this.controlInput
     })
   }.bind(this), timing.controlsLogInterval);
 };
