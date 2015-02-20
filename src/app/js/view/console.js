@@ -101,6 +101,8 @@ var ConsoleView	= Marionette.ItemView.extend({
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/sensor/+');
 		client.subscribe('vehicle/attitude');
+		client.subscribe('vehicle/attitude');
+
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());
@@ -116,6 +118,7 @@ var ConsoleView	= Marionette.ItemView.extend({
 			}
 			if (topic === "vehicle/attitude") {
 				var data = JSON.parse(payload.toString());
+				attitudeModel.set(data);
 				attitudeCharts.roll.addPoint(data.roll);
 				attitudeCharts.pitch.addPoint(data.pitch);
 			}
