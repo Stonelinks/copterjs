@@ -28,11 +28,16 @@ var ConsoleView	= Marionette.ItemView.extend({
 			max: Math.PI,
 			min: -Math.PI
 		});
+    
+    var gyroChartOptions = {
+      min: -Math.PI,
+      max: Math.PI
+    }
 
 		var gyroCharts = {
-			x: new LiveChart(),
-			y: new LiveChart(),
-			z: new LiveChart()
+			x: new LiveChart(gyroChartOptions),
+			y: new LiveChart(gyroChartOptions),
+			z: new LiveChart(gyroChartOptions)
 		}
 		for (var axis in gyroCharts) {
 			gyroCharts[axis].render();
@@ -40,10 +45,14 @@ var ConsoleView	= Marionette.ItemView.extend({
 		}
 
 		// accel charts
+    var accelChartOptions = {
+      min: -10,
+      max: 10
+    }
 		var accelCharts = {
-			x: new LiveChart(),
-			y: new LiveChart(),
-			z: new LiveChart()
+			x: new LiveChart(accelChartOptions),
+			y: new LiveChart(accelChartOptions),
+			z: new LiveChart(accelChartOptions)
 		}
 		for (var axis in accelCharts) {
 			accelCharts[axis].render();
@@ -51,9 +60,13 @@ var ConsoleView	= Marionette.ItemView.extend({
 		}
 
 		// attitude charts
+    var attitudeChartOptions = {
+      min: -Math.PI,
+      max: Math.PI
+    }
 		var attitudeCharts = {
-			roll: new LiveChart(),
-			pitch: new LiveChart()
+			roll: new LiveChart(attitudeChartOptions),
+			pitch: new LiveChart(attitudeChartOptions)
 		}
 		for (var axis in attitudeCharts) {
 			attitudeCharts[axis].render();
