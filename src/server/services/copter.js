@@ -16,7 +16,7 @@ CopterService.prototype.start = function() {
 	console.log("copter server in start");
 
 	var launchpad = new Launchpad()
-    var hovercontroller = new HoverController(launchpad);
+    // var hovercontroller = new HoverController(launchpad);
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
@@ -39,8 +39,8 @@ CopterService.prototype.start = function() {
     }
     this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
       samplingDiff: launchpad.samplingDiff
-      }));
-	}, 30).bind(this)
+    }));
+	}, 50).bind(this)
 
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
