@@ -47,7 +47,6 @@ CopterService.prototype.start = function() {
 		}.bind(this));
 	} else {
 		setInterval(function() {
-			attitude.y += Math.PI/360;
 			updateSocket({
 				raw: 'raw data',
 				gyro: {
