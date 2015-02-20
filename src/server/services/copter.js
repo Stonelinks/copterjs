@@ -58,9 +58,9 @@ CopterService.prototype.start = function() {
     if (data.attitude) {
       this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
     }
-    this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
-      samplingDiff: launchpad.samplingDiff
-    }));
+    // this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
+      // samplingDiff: launchpad.samplingDiff
+    // }));
 	}, 50).bind(this)
 
 	if (launchpad.serial) {
@@ -74,7 +74,7 @@ CopterService.prototype.start = function() {
         samplingDiff: launchpad.samplingDiff
       }
       console.log(debugData)
-      socketLog(debugData)
+      // socketLog(debugData)
     }, 1000)
   }
  else {
@@ -101,6 +101,7 @@ CopterService.prototype.start = function() {
   
   setInterval(function() {
     launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
+    // launchpad.serial.write(new Buffer([255, 1, 2, 3]))
   }, 30)
 
 };

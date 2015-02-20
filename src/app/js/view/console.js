@@ -87,20 +87,19 @@ var ConsoleView	= Marionette.ItemView.extend({
 		}
 
 		// launchpad debug charts
-		var launchpadDebugCharts = {
-			delay: new LiveChart({
-        min: 0,
-        max: 10000
-      })
-		}
-		for (var axis in launchpadDebugCharts) {
-			launchpadDebugCharts[axis].render();
-			this.$el.find("#launchpad-debug-strips").append(launchpadDebugCharts[axis].$el);
-		}
+		// var launchpadDebugCharts = {
+			// delay: new LiveChart({
+        // min: 0,
+        // max: 10000
+      // })
+		// }
+		// for (var axis in launchpadDebugCharts) {
+			// launchpadDebugCharts[axis].render();
+			// this.$el.find("#launchpad-debug-strips").append(launchpadDebugCharts[axis].$el);
+		// }
 
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/sensor/+');
-		client.subscribe('vehicle/attitude');
 		client.subscribe('vehicle/attitude');
 
 		client.on('message', function(topic, payload) {
@@ -122,10 +121,10 @@ var ConsoleView	= Marionette.ItemView.extend({
 				attitudeCharts.roll.addPoint(data.roll);
 				attitudeCharts.pitch.addPoint(data.pitch);
 			}
-			if (topic === "vehicle/sensor/launchpadDiagnostics") {
-				var data = JSON.parse(payload.toString());
-				launchpadDebugCharts.delay.addPoint(data.samplingDiff);
-			}
+			// if (topic === "vehicle/sensor/launchpadDiagnostics") {
+				// var data = JSON.parse(payload.toString());
+				// launchpadDebugCharts.delay.addPoint(data.samplingDiff);
+			// }
 		});
 	}
 
