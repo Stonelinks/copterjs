@@ -1,5 +1,6 @@
 var io = require('socket.io-client');
 var Launchpad = require('./launchpad');
+var HoverController = require('./hovercontroller');
 var mqtt    = require('mqtt');
 var _ = require('lodash');
 
@@ -18,22 +19,30 @@ CopterService.prototype.start = function() {
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
-	}, 5000).bind(this)
-  
-	var attitude = {x: 0, y: 0, z: 0};
+	}, 1000).bind(this)
 
-  
-	var updateSocket = function(data) {
+	var socketLog = _.throttle(function(data) {
 		this.client.publish('vehicle/log/trace', data.raw);
-		this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
-		this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
-		this.client.publish('vehicle/attitude', JSON.stringify(attitude));
-	}.bind(this)
+	}, 1000).bind(this)
+  
+	var updateSocket = _.throttle(function(data) {
+	    if (data.gyro) {
+	      this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
+	    }
+	    if (data.accel) {
+	      this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
+	    }
+	    if (data.attitude) {
+	      this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
+	    }
+	}, 30).bind(this)
 
-	var launchpad = new Launchpad()
+	var launchpad = new Launchpad();
+    var hovercontroller = new HoverController(launchpad);
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
+			socketLog(data)
 			updateSocket(data)
 		}.bind(this));
 	} else {
@@ -50,6 +59,10 @@ CopterService.prototype.start = function() {
 					x: Math.random(),
 					y: Math.random(),
 					z: Math.random()
+				},
+				attitude: {
+					roll: Math.random(),
+					pitch: Math.random()
 				}
 			})
 		}, 250);

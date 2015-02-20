@@ -41,11 +41,16 @@ var ConsoleView	= Marionette.ItemView.extend({
 			max: Math.PI,
 			min: -Math.PI
 		});
+    
+    var gyroChartOptions = {
+      min: -Math.PI,
+      max: Math.PI
+    }
 
 		var gyroCharts = {
-			x: new LiveChart(),
-			y: new LiveChart(),
-			z: new LiveChart()
+			x: new LiveChart(gyroChartOptions),
+			y: new LiveChart(gyroChartOptions),
+			z: new LiveChart(gyroChartOptions)
 		}
 		for (var axis in gyroCharts) {
 			gyroCharts[axis].render();
@@ -53,18 +58,37 @@ var ConsoleView	= Marionette.ItemView.extend({
 		}
 
 		// accel charts
+    var accelChartOptions = {
+      min: -10,
+      max: 10
+    }
 		var accelCharts = {
-			x: new LiveChart(),
-			y: new LiveChart(),
-			z: new LiveChart()
+			x: new LiveChart(accelChartOptions),
+			y: new LiveChart(accelChartOptions),
+			z: new LiveChart(accelChartOptions)
 		}
 		for (var axis in accelCharts) {
 			accelCharts[axis].render();
 			this.$el.find("#accel-strips").append(accelCharts[axis].$el);
 		}
 
+		// attitude charts
+    var attitudeChartOptions = {
+      min: -Math.PI,
+      max: Math.PI
+    }
+		var attitudeCharts = {
+			roll: new LiveChart(attitudeChartOptions),
+			pitch: new LiveChart(attitudeChartOptions)
+		}
+		for (var axis in attitudeCharts) {
+			attitudeCharts[axis].render();
+			this.$el.find("#attitude-strips").append(attitudeCharts[axis].$el);
+		}
+
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/sensor/+');
+		client.subscribe('vehicle/attitude');
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());
@@ -77,6 +101,11 @@ var ConsoleView	= Marionette.ItemView.extend({
 				accelCharts.x.addPoint(data.x);
 				accelCharts.y.addPoint(data.y);
 				accelCharts.z.addPoint(data.z);
+			}
+			if (topic === "vehicle/attitude") {
+				var data = JSON.parse(payload.toString());
+				attitudeCharts.roll.addPoint(data.roll);
+				attitudeCharts.pitch.addPoint(data.pitch);
 			}
 
 		});
