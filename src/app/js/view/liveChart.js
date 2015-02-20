@@ -1,15 +1,15 @@
-var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone'),
+var Marionette = require('backbone.marionette');
+	Backbone = require('backbone'),
 	smoothie	= require('smoothie');
 
 var LiveChart = Marionette.ItemView.extend({
 	template: false,
-	tagName: "canvas",
-	className: "liveChart",
+	tagName: 'canvas',
+	className: 'liveChart',
 
 	initialize: function(options) {
 		this.$el.attr('width', 1200);
-	    console.log(options)
+	    console.log(options);
 	    if (options.min && options.max) {
 	      this.chart = new smoothie.SmoothieChart({
 	        maxValue: options.max,

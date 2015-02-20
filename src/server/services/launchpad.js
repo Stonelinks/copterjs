@@ -57,7 +57,7 @@ var Launchpad = function(port) {
   port = port || '/dev/ttyS2';
 
   if (!fs.existsSync(port)) {
-    console.log("Could not find serial port!")
+    console.log('Could not find serial port!');
     return;
   }
 
@@ -82,8 +82,8 @@ var Launchpad = function(port) {
       cb.call(self);
     }
   };
-  
-  
+
+
   this.write = function(s, cb) {
     cb = cb || function() {};
 
@@ -99,12 +99,12 @@ var Launchpad = function(port) {
     }
   };
 
-  this.samplingDiff = 0.0
+  this.samplingDiff = 0.0;
   var time = process.hrtime();
   serial.on('data', function() {
     time = process.hrtime(time);
     self.samplingDiff = (time[0] + time[1] / 1E9);
-  })
+  });
 
   this.close = function(cb) {
     cb = cb || function() {};

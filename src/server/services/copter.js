@@ -1,53 +1,53 @@
 var Launchpad = require('./launchpad');
-var mqtt    = require('mqtt');
+var mqtt = require('mqtt');
 var _ = require('lodash');
 
 function CopterService() {
-  
-};
+
+}
 
 var mapControlToRange = function(input) {
-  
-  return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))))
-}
+
+  return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))));
+};
 
 var controls = {
   yaw: 127,
   pitch: 127,
   roll: 127,
   throttle: 127
-}
+};
 
 CopterService.prototype.start = function() {
-  
+
   this.client = this.setupMqtt({
 		'vehicle/controls' : function(_controls) {
 			for (thing in _controls) {
-        _controls[thing] = mapControlToRange(_controls[thing])
+        _controls[thing] = mapControlToRange(_controls[thing]);
       }
-      controls = _controls
+      controls = _controls;
 		}
   });
-    
+
 	//setTimeout(this.setupMqtt.bind(this), 1000);
-	console.log("copter server in start");
+	console.log('copter server in start');
 
   setInterval(function() {
-    console.log(controls)
-  }, 200)
+    console.log(controls);
+  }, 200);
 
-	var launchpad = new Launchpad()
+	var launchpad = new Launchpad();
   // var hovercontroller = new HoverController(launchpad);
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
-	}, 1000).bind(this)
+	}, 1000).bind(this);
 
 	var socketLog = function(data) {
 		this.client.publish('vehicle/log/trace', 'running for ' + data.uptime);
 		this.client.publish('vehicle/log/trace', 'event loop at ' + data.samplingDiff + 'Hz');
-	}.bind(this)
-  
+	};.bind(this);
+
 	var updateSocket = _.throttle(function(data) {
     if (data.gyro) {
       this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
@@ -61,21 +61,21 @@ CopterService.prototype.start = function() {
     // this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
       // samplingDiff: launchpad.samplingDiff
     // }));
-	}, 50).bind(this)
+	}, 50).bind(this);
 
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
-			consoleLog(data)
-			updateSocket(data)
+			consoleLog(data);
+			updateSocket(data);
 		}.bind(this));
 		setInterval(function() {
 			var debugData = {
         uptime: process.uptime(),
         samplingDiff: launchpad.samplingDiff
-      }
-      console.log(debugData)
+      };
+      console.log(debugData);
       // socketLog(debugData)
-    }, 1000)
+    }, 1000);
   }
  else {
 		setInterval(function() {
@@ -95,20 +95,20 @@ CopterService.prototype.start = function() {
 					roll: Math.random(),
 					pitch: Math.random()
 				}
-			})
+			});
 		}, 250);
 	}
-  
+
   setInterval(function() {
-    launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
+    launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]));
     // launchpad.serial.write(new Buffer([255, 1, 2, 3]))
-  }, 30)
+  }, 30);
 
 };
 
 CopterService.prototype.setupMqtt = function(topics) {
 	console.log('Setting up mqtt');
-	var client  = mqtt.connect('mqtt://localhost:1883');
+	var client = mqtt.connect('mqtt://localhost:1883');
 
 	for (var topic in topics) {
 		client.subscribe(topic);
@@ -128,6 +128,6 @@ CopterService.prototype.setupMqtt = function(topics) {
 	}.bind(this));
 
 	return client;
-}
+};
 
 module.exports = CopterService;

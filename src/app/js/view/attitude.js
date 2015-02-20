@@ -1,10 +1,10 @@
-var Marionette 	= require('backbone.marionette'),
-	$			= require('jquery'),
-	THREE		= require('three');
+var Marionette = require('backbone.marionette'),
+	$	= require('jquery'),
+	THREE	= require('three');
 
 var AttitudeView = Marionette.ItemView.extend({
 	template: false,
-	tagName: 'canvas', 
+	tagName: 'canvas',
 
 	modelEvents: {
 		'change' : 'setAttitude'
@@ -15,14 +15,14 @@ var AttitudeView = Marionette.ItemView.extend({
 			canvas: this.el,
 			alpha: true
 		});
-		this.renderer.setSize(this.el.width,this.el.height);
-		this.camera = new THREE.PerspectiveCamera( 75, this.el.width / this.el.height, 0.1, 1000 );
+		this.renderer.setSize(this.el.width, this.el.height);
+		this.camera = new THREE.PerspectiveCamera(75, this.el.width / this.el.height, 0.1, 1000);
 		this.scene = new THREE.Scene();
 
-		var geometry = new THREE.SphereGeometry( 5, 32, 32);
+		var geometry = new THREE.SphereGeometry(5, 32, 32);
 		var material = new THREE.MeshBasicMaterial();
-		material.map    = THREE.ImageUtils.loadTexture('images/texture.jpg')
-		this.sphere = new THREE.Mesh( geometry, material );
+		material.map = THREE.ImageUtils.loadTexture('images/texture.jpg');
+		this.sphere = new THREE.Mesh(geometry, material);
 
 
 		/*var indicatorGeometry = new THREE.PlaneGeometry( 5, 5 );
@@ -32,7 +32,7 @@ var AttitudeView = Marionette.ItemView.extend({
 		plane.position.z = 6*/
 		//this.scene.add( plane );
 
-		this.scene.add( this.sphere );
+		this.scene.add(this.sphere);
 		this.camera.position.z = 10;
 		this.renderCanvas();
 	},

@@ -1,9 +1,9 @@
-var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone');
+var Marionette = require('backbone.marionette');
+	Backbone = require('backbone');
 
 var LogLineView = Marionette.ItemView.extend({
 	tagName: 'tr',
-	template: require('../../tmpl/logline.hbs'),
+	template: require('../../tmpl/logline.hbs')
 });
 
 var LogView = Marionette.CollectionView.extend({

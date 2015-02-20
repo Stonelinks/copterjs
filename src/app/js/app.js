@@ -1,7 +1,7 @@
-var $			= require('jquery');
+var $	= require('jquery');
 var Backbone	= require('backbone');
 Backbone.$ = window.$ = window.jQuery = $;
-var Marionette 	= require('backbone.marionette');
+var Marionette = require('backbone.marionette');
 require('bootstrap');
 
 
