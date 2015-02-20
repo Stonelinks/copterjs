@@ -17,11 +17,13 @@ CopterService.prototype.start = function() {
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
-	}, 5000).bind(this)
-  
+	}, 1000).bind(this)
+
+	var socketLog = _.throttle(function(data) {
+		this.client.publish('vehicle/log/trace', data.raw);
+	}, 1000).bind(this)
   
 	var updateSocket = _.throttle(function(data) {
-		this.client.publish('vehicle/log/trace', data.raw);
     if (data.gyro) {
       this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
     }
@@ -31,12 +33,13 @@ CopterService.prototype.start = function() {
     if (data.attitude) {
       this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
     }
-	}, 50).bind(this)
+	}, 30).bind(this)
 
 	var launchpad = new Launchpad()
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
+			socketLog(data)
 			updateSocket(data)
 		}.bind(this));
 	} else {
@@ -52,6 +55,10 @@ CopterService.prototype.start = function() {
 					x: Math.random(),
 					y: Math.random(),
 					z: Math.random()
+				},
+				attitude: {
+					roll: Math.random(),
+					pitch: Math.random()
 				}
 			})
 		}, 250);

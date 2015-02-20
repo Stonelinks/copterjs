@@ -50,8 +50,19 @@ var ConsoleView	= Marionette.ItemView.extend({
 			this.$el.find("#accel-strips").append(accelCharts[axis].$el);
 		}
 
+		// attitude charts
+		var attitudeCharts = {
+			roll: new LiveChart(),
+			pitch: new LiveChart()
+		}
+		for (var axis in attitudeCharts) {
+			attitudeCharts[axis].render();
+			this.$el.find("#attitude-strips").append(attitudeCharts[axis].$el);
+		}
+
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/sensor/+');
+		client.subscribe('vehicle/attitude');
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());
@@ -64,6 +75,11 @@ var ConsoleView	= Marionette.ItemView.extend({
 				accelCharts.x.addPoint(data.x);
 				accelCharts.y.addPoint(data.y);
 				accelCharts.z.addPoint(data.z);
+			}
+			if (topic === "vehicle/attitude") {
+				var data = JSON.parse(payload.toString());
+				attitudeCharts.roll.addPoint(data.roll);
+				attitudeCharts.pitch.addPoint(data.pitch);
 			}
 
 		});
