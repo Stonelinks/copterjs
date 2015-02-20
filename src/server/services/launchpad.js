@@ -35,12 +35,12 @@ var LaunchpadParser = function() {
             }
           });
         }
-        else if (partArray[0] == 'a') {
+        if (partArray[0] == 'a') {
           emitter.emit('data', {
             raw: part,
             attitude: {
-              roll: parseFloatFromSerial(partArray[1]),
-              pitch: parseFloatFromSerial(partArray[2])
+              roll: parseFloat(partArray[1]) * .01,
+              pitch: parseFloat(partArray[2]) * .01
             }
           });
         }
@@ -54,7 +54,7 @@ var LaunchpadParser = function() {
 };
 
 var Launchpad = function(port) {
-  port = port || '/dev/ttyACM0';
+  port = port || '/dev/ttyS2';
 
   if (!fs.existsSync(port)) {
     console.log("Could not find serial port!")

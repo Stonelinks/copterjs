@@ -6,17 +6,38 @@ function CopterService() {
   
 };
 
+var mapControlToRange = function(input) {
+  return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))))
+}
+
+var controls = {
+  yaw: 127,
+  pitch: 127,
+  roll: 127,
+  throttle: 127
+}
+
+
 CopterService.prototype.start = function() {
-	this.client = this.setupMqtt({
-		'vehicle/controls' : function(controls) {
-			// console.log(controls)
+  
+  this.client = this.setupMqtt({
+		'vehicle/controls' : function(_controls) {
+			for (thing in _controls) {
+        _controls[thing] = mapControlToRange(_controls[thing])
+      }
+      controls = _controls
 		}
-	});
+  });
+    
 	//setTimeout(this.setupMqtt.bind(this), 1000);
 	console.log("copter server in start");
 
+  setInterval(function() {
+    console.log(controls)
+  }, 200)
+
 	var launchpad = new Launchpad()
-    // var hovercontroller = new HoverController(launchpad);
+  // var hovercontroller = new HoverController(launchpad);
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
@@ -45,7 +66,6 @@ CopterService.prototype.start = function() {
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
-			socketLog(data)
 			updateSocket(data)
 		}.bind(this));
 		setInterval(function() {
@@ -78,6 +98,11 @@ CopterService.prototype.start = function() {
 			})
 		}, 250);
 	}
+  
+  // setInterval(function() {
+    // launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
+  // }, 20)
+
 };
 
 CopterService.prototype.setupMqtt = function(topics) {

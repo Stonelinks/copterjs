@@ -12,9 +12,9 @@ var JoystickView = Marionette.ItemView.extend({
 	},
 
 	events: {
-		//"mousedown" : "startControl",
-		//"mouseup" :  "stopControl",
-		//"mousemove" : "onControl",
+		"mousedown" : "startControl",
+		"mouseup" :  "stopControl",
+		"mousemove" : "onControl",
 		"touchstart" : "startControl",
 		"touchend" :  "stopControl",
 		"touchmove" : "onControl"
