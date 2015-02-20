@@ -1,5 +1,5 @@
 var Launchpad = require('./launchpad');
-var MotorController = require('./motorcontroller');
+// var MotorController = require('./motorcontroller');
 var mqtt = require('mqtt');
 var _ = require('lodash');
 
@@ -55,19 +55,19 @@ CopterService.prototype.start = function() {
 		'vehicle/controls': this.updateControls.bind(this)
   });
 
-  // this.startControlsLog();
+  this.startControlsLog();
 
 	this.launchpad = new Launchpad();
 
-  this.motorController = new MotorController()
-  this.motorController.pitchGains = motorControllerGains
-  this.motorController.rollGains = motorControllerGains
-  this.motorController.yawRange = Math.PI / 6.0
-  this.motorController.dt = timing.motorControllerInterval
+  // this.motorController = new MotorController()
+  // this.motorController.pitchGains = motorControllerGains
+  // this.motorController.rollGains = motorControllerGains
+  // this.motorController.yawRange = Math.PI / 6.0
+  // this.motorController.dt = timing.motorControllerInterval
 
 	if (this.launchpad.serial && !forceUseFakeData) {
     this.startLaunchpadListener();
-    this.startMotorController()
+    // this.startMotorController()
     this.startLaunchpadWriter();
   }
  else {
@@ -162,6 +162,7 @@ CopterService.prototype.startLaunchpadListener = function() {
 
 CopterService.prototype.startLaunchpadWriter = function() {
   setInterval(function() {
+    this.launchpad.serial.write(new Buffer([255, parseInt(this.controlInput.roll), parseInt(this.controlInput.pitch), parseInt(this.controlInput.yaw)]));
     // this.launchpad.serial.write(new Buffer([255, parseInt(this.motorOutput.m1), parseInt(this.motorOutput.m2), parseInt(this.motorOutput.m3), parseInt(this.motorOutput.m4)]));
   }.bind(this), timing.writerInterval);
 };
