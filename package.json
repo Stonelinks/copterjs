@@ -40,7 +40,9 @@
     "node-ip": "^0.1.0",
     "paper": "https://github.com/paperjs/paper.js/archive/master.tar.gz",
     "qr-image": "^3.1.0",
+    "screenfull": "^2.0.0",
     "serialport": "^1.5.0",
-    "smoothie": "^1.27.0"
+    "smoothie": "^1.27.0",
+    "three": "^0.69.0"
   }
 }

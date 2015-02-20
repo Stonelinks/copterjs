@@ -8,18 +8,20 @@ var LiveChart = Marionette.ItemView.extend({
 	className: "liveChart",
 
 	initialize: function(options) {
-    if (options.min && options.max) {
-      this.chart = new smoothie.SmoothieChart({
-        maxValue: options.max,
-        minValue: options.min
-      });
-    }
-    else {
-      this.chart = new smoothie.SmoothieChart();
-    }
-		
+		this.$el.attr('width', 1200);
+	    console.log(options)
+	    if (options.min && options.max) {
+	      this.chart = new smoothie.SmoothieChart({
+	        maxValue: options.max,
+	        minValue: options.min
+	      });
+	    }
+	    else {
+	      this.chart = new smoothie.SmoothieChart();
+	    }
+
 		this.series = new smoothie.TimeSeries();
-        this.chart.addTimeSeries(this.series, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
+        this.chart.addTimeSeries(this.series, { strokeStyle: 'rgba(0, 255, 0, 1)', lineWidth: 3 });
 	},
 
 	onRender: function() {

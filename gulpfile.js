@@ -18,6 +18,7 @@ var path = {
 	tmpl: './src/app/tmpl/**/*.hbs',
 	style: './src/app/style/**/*.less',
 	js: './src/app/js/**/*.js',
+	images: './src/app/images/**/*.*',
 	server: './src/server/**.js',
 	index: './src/app/index.hbs'
 }
@@ -39,6 +40,11 @@ gulp.task('js', function() {
 			.pipe(gulp.dest('./build/js/'));
 	};
 	return bundle();
+});
+
+gulp.task('images', function() {
+	gulp.src(path.images)
+		.pipe(gulp.dest('./build/images'));
 });
 
 gulp.task('style', function() {
@@ -75,7 +81,7 @@ gulp.task('clean', function() {
 		.pipe(clean());
 });
 
-gulp.task('build', ['js', 'style', 'index']);
+gulp.task('build', ['js', 'style', 'index', 'images']);
 
 gulp.task('watch', ['build'], function() {
 	gulp.watch(path.js, ['js']);

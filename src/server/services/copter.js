@@ -16,6 +16,7 @@ CopterService.prototype.start = function() {
 	console.log("copter server in start");
 
 	var launchpad = new Launchpad()
+    var hovercontroller = new HoverController(launchpad);
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
@@ -44,6 +45,7 @@ CopterService.prototype.start = function() {
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
+			socketLog(data)
 			updateSocket(data)
 		}.bind(this));
 		setInterval(function() {

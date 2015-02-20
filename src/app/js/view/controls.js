@@ -1,6 +1,8 @@
 var Marionette 		= require('backbone.marionette');
 	Backbone 		= require('backbone'),
-	JoystickView	= require('./joystick');
+	screenfull		= require('screenfull'),
+	JoystickView	= require('./joystick')
+	AttitudeView	= require('./attitude');
 
 var ControlsView = Marionette.ItemView.extend({
 	template: require('../../tmpl/controls.hbs'),
@@ -18,11 +20,17 @@ var ControlsView = Marionette.ItemView.extend({
 			model: joystickModelRight
 		}).render();
 
+		var attitudeModel = new Backbone.Model();
+		var attitude = new AttitudeView({
+			el: this.$el.find("#attitude"),
+			model: attitudeModel
+		});
+		attitude.render();
+
 		var client = require('mqtt').connect();
-		client.subscribe('presence');
+		client.subscribe('vehicle/attitude');
 		client.on('message', function(topic, payload) {
-			console.log(topic);
-			console.log(payload.toString());
+			attitudeModel.set(JSON.parse(payload));
 		});
 		var sendControls = function() {
 			client.publish('vehicle/controls', JSON.stringify({
@@ -33,9 +41,26 @@ var ControlsView = Marionette.ItemView.extend({
 			}), {qos: 2});
 		}
 
+
 		joystickModelLeft.on("change", sendControls);
 		joystickModelRight.on("change", sendControls);
-	}
+
+		this.$el.find("#fullscreen").click(function() {
+			if (screenfull.enabled) {
+			    screenfull.request(this.el);
+			}
+		});
+
+		window.addEventListener("load",function() {
+			// Set a timeout...
+			setTimeout(function(){
+				// Hide the address bar!
+				window.scrollTo(0, 100);
+			}, 100);
+		});
+
+	},
+
 });
 
 module.exports = ControlsView;
