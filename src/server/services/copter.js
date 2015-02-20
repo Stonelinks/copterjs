@@ -1,4 +1,5 @@
 var Launchpad = require('./launchpad');
+var HoverController = require('./hovercontroller');
 var mqtt    = require('mqtt');
 var _ = require('lodash');
 
@@ -35,7 +36,8 @@ CopterService.prototype.start = function() {
     }
 	}, 30).bind(this)
 
-	var launchpad = new Launchpad()
+	var launchpad = new Launchpad();
+    var hovercontroller = new HoverController(launchpad);
 	if (launchpad.serial) {
 		launchpad.serial.on('data', function(data) {
 			consoleLog(data)
