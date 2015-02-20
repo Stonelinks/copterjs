@@ -95,6 +95,10 @@ var JoystickView = Marionette.ItemView.extend({
 	stopControl: function(e) {
 		this.controlling = false;
 		this.thumb.visible = false;
+		this.model.set({
+			x: 0,
+			y: 0
+		})
 	},
 
 	onControl: function(e) {
