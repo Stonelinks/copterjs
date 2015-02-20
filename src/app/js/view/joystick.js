@@ -85,7 +85,7 @@ var JoystickView = Marionette.ItemView.extend({
 				x: e.offsetX,
 				y: e.offsetY
 			};
-		};
+		}
 		/*return {
 			x: (e.point.x/this.dimensions.width - 0.5) * 2,
 			y: (e.point.y/this.dimensions.height - 0.5) * 2

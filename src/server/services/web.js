@@ -12,7 +12,7 @@ function WebService() {
 	// stash off where our static root is
 	this.root = path.resolve(__dirname, '../../../build');
 
-	// setup socketio
+	// setup socket
 	this.server = require('http').Server(this.app);
 	var mosca = require('mosca');
 	mqttServ = new mosca.Server({});
@@ -20,7 +20,6 @@ function WebService() {
 		console.log(client.id + ' connected');
 	});
 	mqttServ.attachHttpServer(this.server);
-	this.messages = require('../messages.json');
 }
 
 WebService.prototype.start = function() {
@@ -49,4 +48,4 @@ WebService.prototype.start = function() {
 	}.bind(this));
 };
 
- module.exports = WebService;
+module.exports = WebService;
