@@ -1,3 +1,5 @@
+var Marionette 	= require('backbone.marionette');
+	Backbone 	= require('backbone');
 var Marionette = require('backbone.marionette');
 	Backbone = require('backbone');
 
@@ -15,10 +17,11 @@ var LogView = Marionette.CollectionView.extend({
 
 	initialize: function() {
 		this.collection = new Backbone.Collection();
-
+		console.log("started logs!!!!!");
 		var client = require('mqtt').connect();
-		client.subscribe('vehicle/log/+');
+		client.subscribe('vehicle/log/trace');
 		client.on('message', function(topic, payload) {
+	      	console.log(payload.toString())
 			this.collection.add(new Backbone.Model({msg: payload}));
 		}.bind(this));
 	},
