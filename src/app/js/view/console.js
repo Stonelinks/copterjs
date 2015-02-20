@@ -11,6 +11,13 @@ var ConsoleView	= Marionette.ItemView.extend({
 		this.logView.render();
 		this.$el.find('#log').html(this.logView.$el);
 
+		var gyroSlider = new ThreeDSliderView({
+			model: gyroModel
+		});
+		gyroSlider.render();
+		this.$el.find("#gyro").html(gyroSlider.$el);
+
+		// gyrocharts
 		var gyroModel = new Backbone.Model({
 			value: {
 				x: 0,
@@ -22,36 +29,46 @@ var ConsoleView	= Marionette.ItemView.extend({
 			min: -Math.PI
 		});
 
-		var gyroSlider = new ThreeDSliderView({
-			model: gyroModel
-		});
-		gyroSlider.render();
-		this.$el.find("#gyro").html(gyroSlider.$el);
-
-
-		var charts = {
+		var gyroCharts = {
 			x: new LiveChart(),
 			y: new LiveChart(),
 			z: new LiveChart()
 		}
+		for (var axis in gyroCharts) {
+			gyroCharts[axis].render();
+			this.$el.find("#gyro-strips").append(gyroCharts[axis].$el);
+		}
 
-		for (var axis in charts) {
-			charts[axis].render();
-			this.$el.find("#strips").append(charts[axis].$el);
+		// accel charts
+		var accelCharts = {
+			x: new LiveChart(),
+			y: new LiveChart(),
+			z: new LiveChart()
+		}
+		for (var axis in accelCharts) {
+			accelCharts[axis].render();
+			this.$el.find("#accel-strips").append(accelCharts[axis].$el);
 		}
 
 		var client = require('mqtt').connect();
-		client.subscribe('vehicle/sensor/gyro');
+		client.subscribe('vehicle/sensor/+');
 		client.on('message', function(topic, payload) {
 			if (topic === "vehicle/sensor/gyro") {
 				var data = JSON.parse(payload.toString());
-				gyroModel.set({value: data});
-				charts.x.addPoint(data.x);
-				charts.y.addPoint(data.y);
-				charts.z.addPoint(data.z);
+				gyroCharts.x.addPoint(data.x);
+				gyroCharts.y.addPoint(data.y);
+				gyroCharts.z.addPoint(data.z);
 			}
+			if (topic === "vehicle/sensor/accel") {
+				var data = JSON.parse(payload.toString());
+				accelCharts.x.addPoint(data.x);
+				accelCharts.y.addPoint(data.y);
+				accelCharts.z.addPoint(data.z);
+			}
+
 		});
 	}
+
 });
 
 module.exports = ConsoleView;
