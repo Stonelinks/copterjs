@@ -1,24 +1,52 @@
 var Launchpad = require('./launchpad');
+var MotorController = require('./motorcontroller');
 var mqtt = require('mqtt');
 var _ = require('lodash');
 
-useFakeData = true;
+var forceUseFakeData = false;
 
 var timing = {
   sensorThrottle: 50,
   attitudeThrottle: 50,
   fakeDataInterval: 250,
   controlsLogInterval: 800,
-  writerInterval: 20
+  writerInterval: 20,
+  motorControllerInterval: 20
+};
+
+var motorControllerGains = {
+  k_p: 1.0,
+  k_i: .1,
+  k_d: 0
 };
 
 function CopterService() {
-  this.controls = {
+  this.controlInput = {
     yaw: 127,
     pitch: 127,
     roll: 127,
     throttle: 127
   };
+  this.gyro = {
+    x: 0,
+    y: 0,
+    z: 0
+  };
+  this.accel = {
+    x: 0,
+    y: 0,
+    z: 0
+  };
+  this.attitude = {
+    roll: 0,
+    pitch: 0
+  };
+  this.motorOutput = {
+    m1: 127,
+    m2: 127,
+    m3: 127,
+    m4: 127
+  }
 }
 
 CopterService.prototype.start = function() {
@@ -27,22 +55,30 @@ CopterService.prototype.start = function() {
 		'vehicle/controls': this.updateControls.bind(this)
   });
 
-  this.startControlsLog();
+  // this.startControlsLog();
 
 	this.launchpad = new Launchpad();
-	if (this.launchpad.serial && !useFakeData) {
+
+  this.motorController = new MotorController()
+  this.motorController.pitchGains = motorControllerGains
+  this.motorController.rollGains = motorControllerGains
+  this.motorController.yawRange = Math.PI / 6.0
+  this.motorController.dt = timing.motorControllerInterval
+
+	if (this.launchpad.serial && !forceUseFakeData) {
     this.startLaunchpadListener();
+    this.startMotorController()
     this.startLaunchpadWriter();
   }
  else {
    this.startGenerateFakeData();
-	}
+  }
 
   console.log('started copter service');
 };
 
 CopterService.prototype.setupMqtt = function(topics) {
-	console.log('Setting up mqtt');
+	console.log('setting up mqtt');
 	var client = mqtt.connect('mqtt://localhost:1883');
 
 	for (var topic in topics) {
@@ -71,7 +107,7 @@ CopterService.prototype.updateControls = function(controls) {
   };
 
   for (thing in controls) {
-    this.controls[thing] = mapControlToRange(controls[thing]);
+    this.controlInput[thing] = mapControlToRange(controls[thing]);
   }
 };
 
@@ -83,40 +119,58 @@ CopterService.prototype.publish = function(data) {
   }
 };
 
-CopterService.prototype.publishSensors = _.throttle(function(data) {
+CopterService.prototype.onSensorData = function(data) {
+  this.gyro = data.gyro
+  this.accel = data.accel
+  this.publishSensorData()
+}
+
+CopterService.prototype.onAttitudeData = function(data) {
+  this.attitude = data.attitude
+  this.publishAttitudeData()
+}
+
+CopterService.prototype.publishSensorData = _.throttle(function() {
   this.publish({
-    'vehicle/sensor/gyro': data.gyro,
-    'vehicle/sensor/accel': data.accel
+    'vehicle/sensor/gyro': this.gyro,
+    'vehicle/sensor/accel': this.accel
   });
 }, timing.sensorThrottle);
 
-CopterService.prototype.publishAttitude = _.throttle(function(data) {
+CopterService.prototype.publishAttitudeData = _.throttle(function() {
   this.publish({
-    'vehicle/attitude': data.attitude
+    'vehicle/attitude': this.attitude
   });
 }, timing.attitudeThrottle);
 
 CopterService.prototype.startControlsLog = function() {
   setInterval(function() {
-    console.log(this.controls);
+    console.log(this.controlInput);
   }.bind(this), timing.controlsLogInterval);
 };
 
 CopterService.prototype.startLaunchpadListener = function() {
   this.launchpad.serial.on('data', function(data) {
     if (data.hasOwnProperty('gyro') && data.hasOwnProperty('accel')) {
-      this.publishSensorData.call(this, data);
+      this.onSensorData.call(this, data);
     }
     if (data.hasOwnProperty('attitude')) {
-      this.publishAttitudeData.call(this, data);
+      this.onAttitudeData.call(this, data);
     }
   }.bind(this));
 };
 
 CopterService.prototype.startLaunchpadWriter = function() {
   setInterval(function() {
-    this.launchpad.serial.write(new Buffer([255, parseInt(this.controls.roll), parseInt(this.controls.pitch), parseInt(this.controls.yaw)]));
+    // this.launchpad.serial.write(new Buffer([255, parseInt(this.motorOutput.m1), parseInt(this.motorOutput.m2), parseInt(this.motorOutput.m3), parseInt(this.motorOutput.m4)]));
   }.bind(this), timing.writerInterval);
+};
+
+CopterService.prototype.startMotorController = function() {
+  this.motorController.start()
+  setInterval(function() {
+    this.motorOutput = this.motorController.getMotorOutput(this.attitude, this.controlInput)
+  }.bind(this), timing.motorControllerInterval);
 };
 
 CopterService.prototype.startGenerateFakeData = function() {
@@ -140,8 +194,8 @@ CopterService.prototype.startGenerateFakeData = function() {
     };
 
     console.log('sending fake data to browser');
-    this.publishSensors.call(this, fakeData);
-    this.publishAttitude.call(this, fakeData);
+    this.onSensorData.call(this, fakeData);
+    this.onAttitudeData.call(this, fakeData);
   }.bind(this), timing.fakeDataInterval);
 };
 

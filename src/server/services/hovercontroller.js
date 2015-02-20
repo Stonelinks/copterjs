@@ -2,17 +2,16 @@
 var HoverController = function(launchpad) {
     var launchpad_reference = launchpad;
 
-    var m1 = { roll:0, pitch:0 };
-    var m2 = { roll:0, pitch:0 };
-    var m3 = { roll:0, pitch:0 };
-    var m4 = { roll:0, pitch:0 };
+    var m1 = { roll:0, pitch:0, yaw:0 };
+    var m2 = { roll:0, pitch:0, yaw:0 };
+    var m3 = { roll:0, pitch:0, yaw:0 };
+    var m4 = { roll:0, pitch:0, yaw:0 };
 
     var motor_pwr = { m1:127, m2:127, m3:127, m4:127 };
 
     // constants for pd controller
     var roll_state = { pk:5, dk:1 };
     var pitch_state = { pk:5, dk:1 };
-    var yaw_state = { pk:5, dk:1 };
 
     var update_controller = function( estimated_roll, estimated_pitch ) {
         update_roll( estimated_roll );
