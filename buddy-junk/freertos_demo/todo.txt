@@ -1,0 +1,7 @@
+-PI on vertical rate or I + feed-forward
+ -RC switch determines vert mode
+
+-RC link loss contingency
+-Health thread and LED indicators
+
+-Disable gyro bias estimation?
