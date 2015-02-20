@@ -1,3 +1,4 @@
+var io = require('socket.io-client');
 var Launchpad = require('./launchpad');
 var mqtt    = require('mqtt');
 var _ = require('lodash');
@@ -9,7 +10,7 @@ function CopterService() {
 CopterService.prototype.start = function() {
 	this.client = this.setupMqtt({
 		'vehicle/controls' : function(controls) {
-			// console.log(controls)
+			console.log(controls)
 		}
 	});
 	//setTimeout(this.setupMqtt.bind(this), 1000);
@@ -19,19 +20,15 @@ CopterService.prototype.start = function() {
 		console.log(data.raw);
 	}, 5000).bind(this)
   
+	var attitude = {x: 0, y: 0, z: 0};
+
   
-	var updateSocket = _.throttle(function(data) {
+	var updateSocket = function(data) {
 		this.client.publish('vehicle/log/trace', data.raw);
-    if (data.gyro) {
-      this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
-    }
-    if (data.accel) {
-      this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
-    }
-    if (data.attitude) {
-      this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
-    }
-	}, 50).bind(this)
+		this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
+		this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
+		this.client.publish('vehicle/attitude', JSON.stringify(attitude));
+	}.bind(this)
 
 	var launchpad = new Launchpad()
 	if (launchpad.serial) {
@@ -41,6 +38,7 @@ CopterService.prototype.start = function() {
 		}.bind(this));
 	} else {
 		setInterval(function() {
+			attitude.y += Math.PI/360;
 			updateSocket({
 				raw: 'raw data',
 				gyro: {

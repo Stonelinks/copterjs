@@ -1,29 +1,41 @@
-<div class="row">
-	<div class="panel panel-default col-md-4">
-	  <div class="panel-heading">Logs</div>
-	  <div id="log" class="panel-body">
-	  </div>
-	</div>
-	<div class="panel panel-default col-md-4">
-		<div class="panel-heading">gyro</div>
-		<div id="gyro" class="panel-body">
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-default col-md-4">
+		  <div class="panel-heading">Logs</div>
+		  <div id="log" class="panel-body">
+		  </div>
+		</div>
+		<div class="panel panel-default col-md-4">
+			<div class="panel-heading">attitude</div>
+			<canvas id="attitude" width="300" height="300"/>
+		</div>
+		<div class="panel panel-default col-md-4">
+			<div class="panel-heading">Controls</div>
+			<img src="/qr" height="260"/>
+			<a href="/controls" class="btn btn-default" style="display: block; width: 100%;">controls</a>
 		</div>
 	</div>
-	<div class="panel panel-default col-md-4">
-		<div class="panel-heading">Controls</div>
-		<img src="/qr" />
-		<a href="/controls" class="btn btn-default">controls</a>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-default>
+				<div class="panel-heading">
+					strip charts
+					<div class="btn-group pull-right">
+						<button class="btn btn-default">blah</button>
+						<!--select id="chart-selector" class="form-control" style="width: 100px">
+							<option>gyro</option>
+							<option>accel</option>
+						</select-->
+					</div>
+				</div>
+				<div id="gyro-strips" class="panel-body"></div>
+			</div>
+		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="panel panel-default">
-		<div class="panel-heading">gyro strip</div>
-		<div id="gyro-strips" class="panel-body"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="panel panel-default">
-		<div class="panel-heading">accel strip</div>
-		<div id="accel-strips" class="panel-body"></div>
+	<div class="row">
+		<div class="panel panel-default">
+			<div class="panel-heading">accel strip</div>
+			<div id="accel-strips" class="panel-body"></div>
+		</div>
 	</div>
 </div>

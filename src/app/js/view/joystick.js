@@ -1,60 +1,52 @@
 var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone');
+	Backbone 	= require('backbone'),
+	paper		= require('paper/dist/paper-full');
 
 var JoystickView = Marionette.ItemView.extend({
 	template: false,
 	tagName: "canvas",
 	radius: 20,
 
-	events: {
-		"mousedown" :  "startControl",
-		"mouseup" :  "stopControl",
-		"mousemove" : "onControl",
-		"touchstart" :  "startControl",
-		"touchend" :  "stopControl",
-		"touchmove" : "onControl"
-	},
-
 	modelEvents: {
 		"change" : "draw"
 	},
 
+	events: {
+		//"mousedown" : "startControl",
+		//"mouseup" :  "stopControl",
+		//"mousemove" : "onControl",
+		"touchstart" : "startControl",
+		"touchend" :  "stopControl",
+		"touchmove" : "onControl"
+	},
+
+
 	onRender: function() {
-//		this.measure();
+		this.measure();
+		this.paper = new paper.PaperScope();
+		this.paper.setup(this.el);
 
-		this.context = this.el.getContext('2d');
+		this.target = new this.paper.Path.Circle(new this.paper.Point(this.center.x, this.center.y), 50);
+		this.target.fillColor = new paper.Color(1,1,1,.2);
+		this.target.strokeColor = new paper.Color(1,1,1,.8); 
+		this.target.strokeWidth = 3;
+		//this.target.on('mousedown', this.startControl.bind(this));
 
-		this.dimensions = {
-			width: 460,
-			height: 230
-		};
-		this.center = {
-			x: this.dimensions.width/2,
-			y: this.dimensions.height/2
-		};
-		this.$el.width(this.dimensions.width);
-		this.$el.height(this.dimensions.height);
-
-		this.draw();
+		this.thumb = new this.paper.Path.Circle(new this.paper.Point(this.center.x, this.center.y), 15);
+		this.thumb.fillColor = 'white';
+		this.thumb.visible = false;
+/*
+		this.tool = new this.paper.Tool();
+		this.tool.onMouseMove = this.onControl.bind(this);
+		this.tool.onMouseUp = this.stopControl.bind(this);
+*/
+		this.paper.view.draw();
 	},
 
 	draw: function() {
-		this.context.clearRect(0,0,this.dimensions.width, this.dimensions.height);
-		this.context.beginPath();
-		this.context.arc(this.center.x, this.center.y, this.radius, 0, 2* Math.PI, false);
-		this.context.strokeStyle = "green";
-		this.context.stroke();
-
-		if (this.controlling) {	
-			this.context.beginPath();
-			this.context.arc(
-				(this.model.get('x') + 1)*this.center.x, 
-				(this.model.get('y') + 1)*this.center.y, 
-				10, 0, 2* Math.PI, false);
-			this.context.fillStyle = "green";
-			this.context.fill();
-		}
-		return true;
+		console.log('drawin!');
+		this.thumb.setPosition(new this.paper.Point( (this.model.get('x') + 1) * this.center.x,
+											 	(this.model.get('y') + 1) * this.center.y));
 	},
 
 	measure: function() {
@@ -69,18 +61,13 @@ var JoystickView = Marionette.ItemView.extend({
 	},
 
 	startControl: function(e) {
-		e.preventDefault();
-		this.measure();
-		var coords = this.getCoords(e);
-
-		if (Math.abs(coords.x - this.center.x) < this.radius && Math.abs(coords.y - this.center.y) < this.radius) {
-				this.controlling = true;
-				this.model.set({
-					x: (e.offsetX/this.dimensions.width - 0.5) * 2,
-					y: (e.offsetY/this.dimensions.height - 0.5) * 2
-				});
-				this.draw();
-		}
+		//e.preventDefault();
+		this.controlling = true;
+		/*this.model.set({
+			x: (e.point.x/this.dimensions.width - 0.5) * 2,
+			y: (e.point.y/this.dimensions.height - 0.5) * 2
+		});*/
+		this.thumb.visible = true;
 	},
 
 	getCoords: function(e) {
@@ -98,25 +85,27 @@ var JoystickView = Marionette.ItemView.extend({
 				x: e.offsetX,
 				y: e.offsetY
 			}
-		}
+		};
+		/*return {
+			x: (e.point.x/this.dimensions.width - 0.5) * 2,
+			y: (e.point.y/this.dimensions.height - 0.5) * 2
+		}*/
 	},
 
 	stopControl: function(e) {
 		this.controlling = false;
-		this.model.set({
-			x: 0,
-			y: 0
-		})
+		this.thumb.visible = false;
 	},
 
 	onControl: function(e) {
-		//this.measure();
 		if (this.controlling) {
 			var coords = this.getCoords(e);
 			this.model.set({
 				x: (coords.x/this.dimensions.width - 0.5) * 2,
 				y: (coords.y/this.dimensions.height - 0.5) * 2
 			});
+			//console.log(e);
+			//this.model.set(this.getCoords(e));
 		}
 	}
 });
