@@ -35,7 +35,7 @@ var LaunchpadParser = function() {
             }
           });
         }
-        if (partArray[0] == 'a') {
+        else if (partArray[0] == 'a') {
           emitter.emit('data', {
             raw: part,
             attitude: {

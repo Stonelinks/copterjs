@@ -7,6 +7,7 @@ function CopterService() {
 };
 
 var mapControlToRange = function(input) {
+  
   return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))))
 }
 
@@ -16,7 +17,6 @@ var controls = {
   roll: 127,
   throttle: 127
 }
-
 
 CopterService.prototype.start = function() {
   
@@ -99,9 +99,9 @@ CopterService.prototype.start = function() {
 		}, 250);
 	}
   
-  // setInterval(function() {
-    // launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
-  // }, 20)
+  setInterval(function() {
+    launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
+  }, 30)
 
 };
 
