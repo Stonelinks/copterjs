@@ -10,9 +10,9 @@ var HoverController = function(launchpad) {
     var motor_pwr = { m1:127, m2:127, m3:127, m4:127 };
 
     // constants for pd controller
-    var roll_state = { pk:10, dk:1 };
-    var pitch_state = { pk:10, dk:1 };
-    var yaw_state = { pk:10, dk:1 };
+    var roll_state = { pk:5, dk:1 };
+    var pitch_state = { pk:5, dk:1 };
+    var yaw_state = { pk:5, dk:1 };
 
     var update_controller = function( estimated_roll, estimated_pitch ) {
         update_roll( estimated_roll );
@@ -47,15 +47,35 @@ var HoverController = function(launchpad) {
         motor_pwr.m2 += ( m2.pitch + m2.roll );
         motor_pwr.m3 += ( m3.pitch + m3.roll );
         motor_pwr.m4 += ( m4.pitch + m4.roll );
+        if( motor_pwr.m1 < 0 ) {
+            motor_pwr.m1 = 0;
+        }
+        if( motor_pwr.m1 > 254 ) {
+            motor_pwr.m1 = 254;
+        }
+        if( motor_pwr.m2 < 0 ) {
+            motor_pwr.m2 = 0;
+        }
+        if( motor_pwr.m2 > 254 ) {
+            motor_pwr.m2 = 254;
+        }
+        if( motor_pwr.m3 < 0 ) {
+            motor_pwr.m3 = 0;
+        }
+        if( motor_pwr.m3 > 254 ) {
+            motor_pwr.m3 = 254;
+        }
+        if( motor_pwr.m4 < 0 ) {
+            motor_pwr.m4 = 0;
+        }
+        if( motor_pwr.m4 > 254 ) {
+            motor_pwr.m4 = 254;
+        }
     };
 
     // write result to motor
     var update_motor = function() {
-        launchpad_reference.write(255);
-        launchpad_reference.write(motor_pwr.m1);
-        launchpad_reference.write(motor_pwr.m2);
-        launchpad_reference.write(motor_pwr.m3);
-        launchpad_reference.write(motor_pwr.m4);
+        launchpad_reference.write(new Buffer([255,motor_pwr.m1,motor_pwr.m2,motor_pwr.m3,motor_pwr.m4]));
     }
 };
 

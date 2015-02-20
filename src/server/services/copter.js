@@ -1,4 +1,5 @@
 var Launchpad = require('./launchpad');
+//var HoverController = require('./hovercontroller');
 var mqtt    = require('mqtt');
 var _ = require('lodash');
 
@@ -37,7 +38,7 @@ CopterService.prototype.start = function() {
   }, 200)
 
 	var launchpad = new Launchpad()
-  // var hovercontroller = new HoverController(launchpad);
+    //var hovercontroller = new HoverController(launchpad);
 
 	var consoleLog = _.throttle(function(data) {
 		console.log(data.raw);
