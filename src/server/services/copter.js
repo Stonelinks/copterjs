@@ -1,133 +1,148 @@
 var Launchpad = require('./launchpad');
-//var HoverController = require('./hovercontroller');
-var mqtt    = require('mqtt');
+var mqtt = require('mqtt');
 var _ = require('lodash');
 
-function CopterService() {
-  
+useFakeData = true;
+
+var timing = {
+  sensorThrottle: 50,
+  attitudeThrottle: 50,
+  fakeDataInterval: 250,
+  controlsLogInterval: 800,
+  writerInterval: 20
 };
 
-var mapControlToRange = function(input) {
-  return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))))
+function CopterService() {
+  this.controls = {
+    yaw: 127,
+    pitch: 127,
+    roll: 127,
+    throttle: 127
+  };
 }
-
-var controls = {
-  yaw: 127,
-  pitch: 127,
-  roll: 127,
-  throttle: 127
-}
-
 
 CopterService.prototype.start = function() {
-  
+
   this.client = this.setupMqtt({
-		'vehicle/controls' : function(_controls) {
-			for (thing in _controls) {
-        _controls[thing] = mapControlToRange(_controls[thing])
-      }
-      controls = _controls
-		}
+		'vehicle/controls': this.updateControls.bind(this)
   });
-    
-	//setTimeout(this.setupMqtt.bind(this), 1000);
-	console.log("copter server in start");
 
-  setInterval(function() {
-    console.log(controls)
-  }, 200)
+  this.startControlsLog();
 
-	var launchpad = new Launchpad()
-    //var hovercontroller = new HoverController(launchpad);
-
-	var consoleLog = _.throttle(function(data) {
-		console.log(data.raw);
-	}, 1000).bind(this)
-
-	var socketLog = function(data) {
-		this.client.publish('vehicle/log/trace', 'running for ' + data.uptime);
-		this.client.publish('vehicle/log/trace', 'event loop at ' + data.samplingDiff + 'Hz');
-	}.bind(this)
-  
-	var updateSocket = _.throttle(function(data) {
-    if (data.gyro) {
-      this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
-    }
-    if (data.accel) {
-      this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
-    }
-    if (data.attitude) {
-      this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
-    }
-    this.client.publish('vehicle/sensor/launchpadDiagnostics', JSON.stringify({
-      samplingDiff: launchpad.samplingDiff
-    }));
-	}, 50).bind(this)
-
-	if (launchpad.serial) {
-		launchpad.serial.on('data', function(data) {
-			consoleLog(data)
-			updateSocket(data)
-		}.bind(this));
-		setInterval(function() {
-			var debugData = {
-        uptime: process.uptime(),
-        samplingDiff: launchpad.samplingDiff
-      }
-      console.log(debugData)
-      socketLog(debugData)
-    }, 1000)
+	this.launchpad = new Launchpad();
+	if (this.launchpad.serial && !useFakeData) {
+    this.startLaunchpadListener();
+    this.startLaunchpadWriter();
   }
  else {
-		setInterval(function() {
-			updateSocket({
-				raw: 'raw data',
-				gyro: {
-					x: Math.random(),
-					y: Math.random(),
-					z: Math.random()
-				},
-				accel: {
-					x: Math.random(),
-					y: Math.random(),
-					z: Math.random()
-				},
-				attitude: {
-					roll: Math.random(),
-					pitch: Math.random()
-				}
-			})
-		}, 250);
+   this.startGenerateFakeData();
 	}
-  
-  // setInterval(function() {
-    // launchpad.serial.write(new Buffer([255, parseInt(controls.roll), parseInt(controls.pitch), parseInt(controls.yaw)]))
-  // }, 20)
 
+  console.log('started copter service');
 };
 
 CopterService.prototype.setupMqtt = function(topics) {
 	console.log('Setting up mqtt');
-	var client  = mqtt.connect('mqtt://localhost:1883');
+	var client = mqtt.connect('mqtt://localhost:1883');
 
 	for (var topic in topics) {
 		client.subscribe(topic);
 	}
 	client.publish('vehicle/sensor/accel', {x: Math.random(), y: Math.random(), z: Math.random()});
 
-  	client.on('message', function(topic, payload) {
-  		if (topics[topic]) {
-  			var data;
-  			try {
-  				data = JSON.parse(payload.toString());
-  			} catch (e) {
-  				data = payload.toString();
-  			}
-  			topics[topic].call(this, data);
-  		}
+  client.on('message', function(topic, payload) {
+    if (topics[topic]) {
+      var data;
+      try {
+        data = JSON.parse(payload.toString());
+      } catch (e) {
+        data = payload.toString();
+      }
+      topics[topic].call(this, data);
+    }
 	}.bind(this));
 
 	return client;
-}
+};
+
+CopterService.prototype.updateControls = function(controls) {
+  var mapControlToRange = function(input) {
+    return Math.max(0, Math.min(255, Math.floor(127 + (input * 127))));
+  };
+
+  for (thing in controls) {
+    this.controls[thing] = mapControlToRange(controls[thing]);
+  }
+};
+
+CopterService.prototype.publish = function(data) {
+  for (topic in data) {
+    if (data[topic]) {
+      this.client.publish(topic, JSON.stringify(data[topic]));
+    }
+  }
+};
+
+CopterService.prototype.publishSensors = _.throttle(function(data) {
+  this.publish({
+    'vehicle/sensor/gyro': data.gyro,
+    'vehicle/sensor/accel': data.accel
+  });
+}, timing.sensorThrottle);
+
+CopterService.prototype.publishAttitude = _.throttle(function(data) {
+  this.publish({
+    'vehicle/attitude': data.attitude
+  });
+}, timing.attitudeThrottle);
+
+CopterService.prototype.startControlsLog = function() {
+  setInterval(function() {
+    console.log(this.controls);
+  }.bind(this), timing.controlsLogInterval);
+};
+
+CopterService.prototype.startLaunchpadListener = function() {
+  this.launchpad.serial.on('data', function(data) {
+    if (data.hasOwnProperty('gyro') && data.hasOwnProperty('accel')) {
+      this.publishSensorData.call(this, data);
+    }
+    if (data.hasOwnProperty('attitude')) {
+      this.publishAttitudeData.call(this, data);
+    }
+  }.bind(this));
+};
+
+CopterService.prototype.startLaunchpadWriter = function() {
+  setInterval(function() {
+    this.launchpad.serial.write(new Buffer([255, parseInt(this.controls.roll), parseInt(this.controls.pitch), parseInt(this.controls.yaw)]));
+  }.bind(this), timing.writerInterval);
+};
+
+CopterService.prototype.startGenerateFakeData = function() {
+  setInterval(function() {
+    var fakeData = {
+      raw: 'raw data',
+      gyro: {
+        x: Math.random(),
+        y: Math.random(),
+        z: Math.random()
+      },
+      accel: {
+        x: Math.random(),
+        y: Math.random(),
+        z: Math.random()
+      },
+      attitude: {
+        roll: Math.random(),
+        pitch: Math.random()
+      }
+    };
+
+    console.log('sending fake data to browser');
+    this.publishSensors.call(this, fakeData);
+    this.publishAttitude.call(this, fakeData);
+  }.bind(this), timing.fakeDataInterval);
+};
 
 module.exports = CopterService;

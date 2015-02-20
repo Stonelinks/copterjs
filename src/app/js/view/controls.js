@@ -1,7 +1,7 @@
-var Marionette 		= require('backbone.marionette');
-	Backbone 		= require('backbone'),
-	screenfull		= require('screenfull'),
-	JoystickView	= require('./joystick')
+var Marionette = require('backbone.marionette');
+	Backbone = require('backbone'),
+	screenfull	= require('screenfull'),
+	JoystickView	= require('./joystick');
 	AttitudeView	= require('./attitude');
 
 var ControlsView = Marionette.ItemView.extend({
@@ -22,7 +22,7 @@ var ControlsView = Marionette.ItemView.extend({
 
 		var attitudeModel = new Backbone.Model();
 		var attitude = new AttitudeView({
-			el: this.$el.find("#attitude"),
+			el: this.$el.find('#attitude'),
 			model: attitudeModel
 		});
 		attitude.render();
@@ -37,29 +37,29 @@ var ControlsView = Marionette.ItemView.extend({
 				yaw: joystickModelLeft.get('x'),
 				throttle: joystickModelLeft.get('y'),
 				pitch: joystickModelRight.get('y'),
-				roll: joystickModelRight.get('x'),
+				roll: joystickModelRight.get('x')
 			}), {qos: 2});
-		}
+		};
 
 
-		joystickModelLeft.on("change", sendControls);
-		joystickModelRight.on("change", sendControls);
+		joystickModelLeft.on('change', sendControls);
+		joystickModelRight.on('change', sendControls);
 
-		this.$el.find("#fullscreen").click(function() {
+		this.$el.find('#fullscreen').click(function() {
 			if (screenfull.enabled) {
 			    screenfull.request(this.el);
 			}
 		});
 
-		window.addEventListener("load",function() {
+		window.addEventListener('load', function() {
 			// Set a timeout...
-			setTimeout(function(){
+			setTimeout(function() {
 				// Hide the address bar!
 				window.scrollTo(0, 100);
 			}, 100);
 		});
 
-	},
+	}
 
 });
 

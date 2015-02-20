@@ -1,9 +1,9 @@
-var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone');
+var Marionette = require('backbone.marionette');
+	Backbone = require('backbone');
 
 var LogLineView = Marionette.ItemView.extend({
 	tagName: 'tr',
-	template: require('../../tmpl/logline.hbs'),
+	template: require('../../tmpl/logline.hbs')
 });
 
 var LogView = Marionette.CollectionView.extend({
@@ -19,7 +19,6 @@ var LogView = Marionette.CollectionView.extend({
 		var client = require('mqtt').connect();
 		client.subscribe('vehicle/log/+');
 		client.on('message', function(topic, payload) {
-      console.log(payload.toString())
 			this.collection.add(new Backbone.Model({msg: payload}));
 		}.bind(this));
 	},

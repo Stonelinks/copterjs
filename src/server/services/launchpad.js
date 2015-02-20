@@ -19,103 +19,93 @@ var LaunchpadParser = function() {
     data = parts.pop();
     parts.forEach(function(part) {
       partArray = part.split(lineDelimiter);
-      // try {
-        if (partArray[0] == 'i') {
-          emitter.emit('data', {
-            raw: part,
-            gyro: {
-              x: parseFloatFromSerial(partArray[1]),
-              y: parseFloatFromSerial(partArray[2]),
-              z: parseFloatFromSerial(partArray[3])
-            },
-            accel: {
-              x: parseFloatFromSerial(partArray[4]),
-              y: parseFloatFromSerial(partArray[5]),
-              z: parseFloatFromSerial(partArray[6])
-            }
-          });
-        }
-        if (partArray[0] == 'a') {
-          emitter.emit('data', {
-            raw: part,
-            attitude: {
-              roll: parseFloat(partArray[1]) * .01,
-              pitch: parseFloat(partArray[2]) * .01
-            }
-          });
-        }
-
-      // }
-      // catch (e) {
-        // console.log('serial parser fucked up')
-      // }
+      if (partArray[0] == 'i') {
+        emitter.emit('data', {
+          raw: part,
+          gyro: {
+            x: parseFloatFromSerial(partArray[1]),
+            y: parseFloatFromSerial(partArray[2]),
+            z: parseFloatFromSerial(partArray[3])
+          },
+          accel: {
+            x: parseFloatFromSerial(partArray[4]),
+            y: parseFloatFromSerial(partArray[5]),
+            z: parseFloatFromSerial(partArray[6])
+          }
+        });
+      }
+      else if (partArray[0] == 'a') {
+        emitter.emit('data', {
+          raw: part,
+          attitude: {
+            roll: parseFloat(partArray[1]) * .01,
+            pitch: parseFloat(partArray[2]) * .01
+          }
+        });
+      }
     });
   };
 };
 
-var Launchpad = function(port) {
+var Launchpad = function(port, baudrate) {
   port = port || '/dev/ttyS2';
+  baudrate = baudrate || 115200;
 
   if (!fs.existsSync(port)) {
-    console.log("Could not find serial port!")
+    console.log('Could not find serial port!');
     return;
   }
 
-  var self = this;
-
-  var opened = false;
-
-  var serial = this.serial = new serialPort.SerialPort(port, {
-    baudrate: 115200,
+  this.opened = false;
+  this.serial = new serialPort.SerialPort(port, {
+    baudrate: baudrate,
     parser: LaunchpadParser()
   });
+};
 
-  this.open = function(cb) {
-    cb = cb || function() {};
-    if (!opened) {
-      serial.on('open', function() {
-        opened = true;
-        setTimeout(cb, 300);
-      });
-    }
-    else {
-      cb.call(self);
-    }
-  };
-  
-  
-  this.write = function(s, cb) {
-    cb = cb || function() {};
+Launchpad.prototype.open = function(cb) {
+  cb = cb || function() {};
 
-    var _write = function() {
-      serial.write(s, cb);
-    };
+  var _this = this;
+  if (!this.opened) {
+    this.serial.on('open', function() {
+      this.opened = true;
+      setTimeout(function() {
+        cb.call(_this);
+      }, 300);
+    });
+  }
+  else {
+    cb.call(this);
+  }
+};
 
-    if (!opened) {
-      self.open(_write);
-    }
-    else {
-      _write();
-    }
+Launchpad.prototype.write = function(s, cb) {
+  cb = cb || function() {};
+
+  var _this = this;
+  var _write = function() {
+    _this.serial.write(s, cb);
   };
 
-  this.samplingDiff = 0.0
-  var time = process.hrtime();
-  serial.on('data', function() {
-    time = process.hrtime(time);
-    self.samplingDiff = (time[0] + time[1] / 1E9);
-  })
+  if (!this.opened) {
+    this.open(_write);
+  }
+  else {
+    _write();
+  }
+};
 
-  this.close = function(cb) {
-    cb = cb || function() {};
-    if (opened) {
-      serial.close(cb);
-      opened = false;
-    }
-    else {
-      cb.call(self);
-    }
-  };
+Launchpad.prototype.close = function(cb) {
+  cb = cb || function() {};
+
+  if (this.opened) {
+    this.serial.close(cb);
+    this.opened = false;
+  }
+  else {
+    cb.call(this);
+  }
 };
 
 module.exports = Launchpad;

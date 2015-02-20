@@ -1,25 +1,25 @@
-var Marionette 	= require('backbone.marionette');
-	Backbone 	= require('backbone'),
-	paper		= require('paper/dist/paper-full');
+var Marionette = require('backbone.marionette');
+	Backbone = require('backbone'),
+	paper	= require('paper/dist/paper-full');
 
 var JoystickView = Marionette.ItemView.extend({
 	template: false,
-	tagName: "canvas",
+	tagName: 'canvas',
 	radius: 20,
 
 	modelEvents: {
-		"change" : "draw"
+		'change' : 'draw'
 	},
 
 	events: {
-		"mousedown" : "startControl",
-		"mouseup" :  "stopControl",
-		"mousemove" : "onControl",
-		"mouseout" : "stopControl",
-		"touchstart" : "startControl",
-		"touchend" :  "stopControl",
-		"touchleave" : "stopControl",
-		"touchmove" : "onControl"
+		'mousedown' : 'startControl',
+		'mouseup' : 'stopControl',
+		'mousemove' : 'onControl',
+		'mousemove' : 'stopControl',
+		'touchstart' : 'startControl',
+		'touchend' : 'stopControl',
+		'touchleave' : 'stopControl',
+		'touchmove' : 'onControl'
 	},
 
 
@@ -29,8 +29,8 @@ var JoystickView = Marionette.ItemView.extend({
 		this.paper.setup(this.el);
 
 		this.target = new this.paper.Path.Circle(new this.paper.Point(this.center.x, this.center.y), 50);
-		this.target.fillColor = new paper.Color(1,1,1,.2);
-		this.target.strokeColor = new paper.Color(1,1,1,.8); 
+		this.target.fillColor = new paper.Color(1, 1, 1, .2);
+		this.target.strokeColor = new paper.Color(1, 1, 1, .8);
 		this.target.strokeWidth = 3;
 		//this.target.on('mousedown', this.startControl.bind(this));
 
@@ -47,7 +47,7 @@ var JoystickView = Marionette.ItemView.extend({
 
 	draw: function() {
 		console.log('drawin!');
-		this.thumb.setPosition(new this.paper.Point( (this.model.get('x') + 1) * this.center.x,
+		this.thumb.setPosition(new this.paper.Point((this.model.get('x') + 1) * this.center.x,
 											 	(this.model.get('y') + 1) * this.center.y));
 	},
 
@@ -57,8 +57,8 @@ var JoystickView = Marionette.ItemView.extend({
 			height: this.el.height
 		};
 		this.center = {
-			x: this.dimensions.width/2,
-			y: this.dimensions.height/2
+			x: this.dimensions.width / 2,
+			y: this.dimensions.height / 2
 		};
 	},
 
@@ -77,7 +77,7 @@ var JoystickView = Marionette.ItemView.extend({
 			var local = {
 				x: this.$el.offset().left,
 				y: this.$el.offset().top
-			}
+			};
 			return {
 				x: e.originalEvent.targetTouches[0].pageX - local.x,
 				y: e.originalEvent.targetTouches[0].pageY - local.y
@@ -86,8 +86,8 @@ var JoystickView = Marionette.ItemView.extend({
 			return {
 				x: e.offsetX,
 				y: e.offsetY
-			}
-		};
+			};
+		}
 		/*return {
 			x: (e.point.x/this.dimensions.width - 0.5) * 2,
 			y: (e.point.y/this.dimensions.height - 0.5) * 2
@@ -100,15 +100,15 @@ var JoystickView = Marionette.ItemView.extend({
 		this.model.set({
 			x: 0,
 			y: 0
-		})
+		});
 	},
 
 	onControl: function(e) {
 		if (this.controlling) {
 			var coords = this.getCoords(e);
 			this.model.set({
-				x: (coords.x/this.dimensions.width - 0.5) * 2,
-				y: (coords.y/this.dimensions.height - 0.5) * 2
+				x: (coords.x / this.dimensions.width - 0.5) * 2,
+				y: (coords.y / this.dimensions.height - 0.5) * 2
 			});
 			//console.log(e);
 			//this.model.set(this.getCoords(e));

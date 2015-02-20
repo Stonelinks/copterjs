@@ -1,11 +1,11 @@
-var Marionette 	= require('backbone.marionette');
-var	LogView		= require('./log');
+var Marionette = require('backbone.marionette');
+var	LogView	= require('./log');
 
 var ThreeDSliderView	= Marionette.ItemView.extend({
 	template: require('../../tmpl/3dSlider.hbs'),
 
 	modelEvents: {
-		"change:value" : "updateValues"
+		'change:value' : 'updateValues'
 	},
 
 	onRender: function() {
