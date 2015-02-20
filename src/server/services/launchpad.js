@@ -11,6 +11,7 @@ var LaunchpadParser = function() {
   };
 
   var data = '';
+  var dataMsg = {};
   var partArray = [];
   return function(emitter, buffer) {
     data += buffer.toString(encoding);
@@ -18,19 +19,35 @@ var LaunchpadParser = function() {
     data = parts.pop();
     parts.forEach(function(part) {
       partArray = part.split(lineDelimiter);
-      emitter.emit('data', {
-        raw: part,
-        gyro: {
-          x: parseFloatFromSerial(partArray[1]),
-          y: parseFloatFromSerial(partArray[2]),
-          z: parseFloatFromSerial(partArray[3])
-        },
-        accel: {
-          x: parseFloatFromSerial(partArray[4]),
-          y: parseFloatFromSerial(partArray[5]),
-          z: parseFloatFromSerial(partArray[6])
+      try {
+        if (partArray[0] == 'i') {
+          emitter.emit('data', {
+            raw: part,
+            gyro: {
+              x: parseFloatFromSerial(partArray[1]),
+              y: parseFloatFromSerial(partArray[2]),
+              z: parseFloatFromSerial(partArray[3])
+            },
+            accel: {
+              x: parseFloatFromSerial(partArray[4]),
+              y: parseFloatFromSerial(partArray[5]),
+              z: parseFloatFromSerial(partArray[6])
+            }
+          });
         }
-      });
+        else if (partArray[0] == 'a') {
+          emitter.emit('data', {
+            raw: part,
+            attitude: {
+              roll: parseFloatFromSerial(partArray[1]),
+              pitch: parseFloatFromSerial(partArray[2])
+            }
+          });
+        }
+      }
+      catch (e) {
+        console.log('serial parser fucked up')
+      }
     });
   };
 };

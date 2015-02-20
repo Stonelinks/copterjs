@@ -9,7 +9,7 @@ function CopterService() {
 CopterService.prototype.start = function() {
 	this.client = this.setupMqtt({
 		'vehicle/controls' : function(controls) {
-			console.log(controls)
+			// console.log(controls)
 		}
 	});
 	//setTimeout(this.setupMqtt.bind(this), 1000);
@@ -20,11 +20,18 @@ CopterService.prototype.start = function() {
 	}, 5000).bind(this)
   
   
-	var updateSocket = function(data) {
+	var updateSocket = _.throttle(function(data) {
 		this.client.publish('vehicle/log/trace', data.raw);
-		this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
-		this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
-	}.bind(this)
+    if (data.gyro) {
+      this.client.publish('vehicle/sensor/gyro', JSON.stringify(data.gyro));
+    }
+    if (data.accel) {
+      this.client.publish('vehicle/sensor/accel', JSON.stringify(data.accel));
+    }
+    if (data.attitude) {
+      this.client.publish('vehicle/attitude', JSON.stringify(data.attitude));
+    }
+	}, 50).bind(this)
 
 	var launchpad = new Launchpad()
 	if (launchpad.serial) {
