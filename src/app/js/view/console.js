@@ -143,15 +143,11 @@ var ConsoleView	= Marionette.ItemView.extend({
 				gyroCharts.y.addPoint(data.y);
 				gyroCharts.z.addPoint(data.z);
 			}
-			if (topic === "vehicle/attitude" && selectedStrip === 'attitude') {
+			if (topic === "vehicle/attitude") {
 				var data = JSON.parse(payload.toString());
 				attitudeModel.set(data);
-				gyroCharts.x.addPoint(data.pitch);
-				gyroCharts.z.addPoint(data.roll);
-			}
-			if (topic === "vehicle/sensor/launchpadDiagnostics") {
-				var data = JSON.parse(payload.toString());
-			//	launchpadDebugCharts.delay.addPoint(data.samplingDiff);
+				// gyroCharts.x.addPoint(data.pitch);
+				// gyroCharts.z.addPoint(data.roll);
 			}
 		});
 	}
