@@ -1,5 +1,5 @@
 var Launchpad = require('./launchpad');
-// var MotorController = require('./motorcontroller');
+var MotorController = require('./motorcontroller');
 var mqtt = require('mqtt');
 var _ = require('lodash');
 
@@ -10,6 +10,7 @@ var timing = {
   attitudeThrottle: 50,
   fakeDataInterval: 250,
   controlsLogInterval: 500,
+  motorLogInterval: 500,
   writerInterval: 20,
   motorControllerInterval: 20
 };
@@ -59,15 +60,15 @@ CopterService.prototype.start = function() {
 
 	this.launchpad = new Launchpad();
 
-  // this.motorController = new MotorController()
-  // this.motorController.pitchGains = motorControllerGains
-  // this.motorController.rollGains = motorControllerGains
-  // this.motorController.yawRange = Math.PI / 6.0
-  // this.motorController.dt = timing.motorControllerInterval
+  this.motorController = new MotorController()
+  this.motorController.pitchGains = motorControllerGains
+  this.motorController.rollGains = motorControllerGains
+  this.motorController.yawRange = Math.PI / 6.0
+  this.motorController.dt = timing.motorControllerInterval
 
 	if (this.launchpad.serial && !forceUseFakeData) {
     this.startLaunchpadListener();
-    // this.startMotorController()
+    this.startMotorController()
     this.startLaunchpadWriter();
   }
  else {
@@ -152,6 +153,15 @@ CopterService.prototype.startControlsLog = function() {
   }.bind(this), timing.controlsLogInterval);
 };
 
+CopterService.prototype.startMotorLog = function() {
+  setInterval(function() {
+    console.log(this.controlInput);
+    this.publish({
+    	'vehicle/log/trace' : this.controlInput
+    })
+  }.bind(this), timing.controlsLogInterval);
+};
+
 CopterService.prototype.startLaunchpadListener = function() {
   this.launchpad.serial.on('data', function(data) {
     if (data.hasOwnProperty('gyro') && data.hasOwnProperty('accel')) {
@@ -178,7 +188,10 @@ CopterService.prototype.startMotorController = function() {
 };
 
 CopterService.prototype.startGenerateFakeData = function() {
+  var t = 0
+  
   setInterval(function() {
+    t++
     var fakeData = {
       raw: 'raw data',
       gyro: {
@@ -192,8 +205,8 @@ CopterService.prototype.startGenerateFakeData = function() {
         z: Math.random()
       },
       attitude: {
-        roll: Math.random(),
-        pitch: Math.random()
+        roll: Math.sin(0.5 * t),
+        pitch: Math.cos(0.5 * t)
       }
     };
 

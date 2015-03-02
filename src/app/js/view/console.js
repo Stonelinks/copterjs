@@ -146,8 +146,8 @@ var ConsoleView	= Marionette.ItemView.extend({
 			if (topic === "vehicle/attitude") {
 				var data = JSON.parse(payload.toString());
 				attitudeModel.set(data);
-				// gyroCharts.x.addPoint(data.pitch);
-				// gyroCharts.z.addPoint(data.roll);
+				gyroCharts.x.addPoint(data.pitch);
+				gyroCharts.z.addPoint(data.roll);
 			}
 		});
 	}
