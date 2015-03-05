@@ -9,8 +9,8 @@
 #define CONTROL_H_
 
 // Set which kind of quad this is
-#define MINIQUAD
-//#define BUDDYQUAD
+//#define MINIQUAD
+#define BUDDYQUAD
 
 #include "estimation/estimation.h"
 #include "mathlib/mathlib.h"

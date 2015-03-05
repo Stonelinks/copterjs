@@ -10,6 +10,7 @@ ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
 "./comm/comm.obj" \
 "./comm/UART5.obj" \
+"./comm/UART1.obj" \
 "./comm/UART0.obj" \
 "./comm/I2C1.obj" \
 "./control/integrator.obj" \
@@ -175,8 +176,8 @@ Hackathon\ Quad.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "Hackathon Quad.out"
-	-$(RM) "freertos_demo.pp" "led_task.pp" "startup_ccs.pp" "utils\uartstdio.pp" "utils\ustdlib.pp" "utils\utils.pp" "third_party\FreeRTOS\Source\list.pp" "third_party\FreeRTOS\Source\queue.pp" "third_party\FreeRTOS\Source\tasks.pp" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.pp" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.pp" "sensors\sensors.pp" "mathlib\mathlib.pp" "mathlib\quaternion.pp" "estimation\estimation.pp" "drivers\buttons.pp" "drivers\rgb.pp" "driverlib\gpio.pp" "driverlib\i2c.pp" "driverlib\interrupt.pp" "driverlib\sysctl.pp" "driverlib\timer.pp" "driverlib\uart.pp" "control\RC.pp" "control\control.pp" "control\effectors.pp" "control\integrator.pp" "comm\I2C1.pp" "comm\UART0.pp" "comm\UART5.pp" "comm\comm.pp" 
-	-$(RM) "freertos_demo.obj" "led_task.obj" "startup_ccs.obj" "utils\uartstdio.obj" "utils\ustdlib.obj" "utils\utils.obj" "third_party\FreeRTOS\Source\list.obj" "third_party\FreeRTOS\Source\queue.obj" "third_party\FreeRTOS\Source\tasks.obj" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.obj" "sensors\sensors.obj" "mathlib\mathlib.obj" "mathlib\quaternion.obj" "estimation\estimation.obj" "drivers\buttons.obj" "drivers\rgb.obj" "driverlib\gpio.obj" "driverlib\i2c.obj" "driverlib\interrupt.obj" "driverlib\sysctl.obj" "driverlib\timer.obj" "driverlib\uart.obj" "control\RC.obj" "control\control.obj" "control\effectors.obj" "control\integrator.obj" "comm\I2C1.obj" "comm\UART0.obj" "comm\UART5.obj" "comm\comm.obj" 
+	-$(RM) "freertos_demo.pp" "led_task.pp" "startup_ccs.pp" "utils\uartstdio.pp" "utils\ustdlib.pp" "utils\utils.pp" "third_party\FreeRTOS\Source\list.pp" "third_party\FreeRTOS\Source\queue.pp" "third_party\FreeRTOS\Source\tasks.pp" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.pp" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.pp" "sensors\sensors.pp" "mathlib\mathlib.pp" "mathlib\quaternion.pp" "estimation\estimation.pp" "drivers\buttons.pp" "drivers\rgb.pp" "driverlib\gpio.pp" "driverlib\i2c.pp" "driverlib\interrupt.pp" "driverlib\sysctl.pp" "driverlib\timer.pp" "driverlib\uart.pp" "control\RC.pp" "control\control.pp" "control\effectors.pp" "control\integrator.pp" "comm\I2C1.pp" "comm\UART0.pp" "comm\UART1.pp" "comm\UART5.pp" "comm\comm.pp" 
+	-$(RM) "freertos_demo.obj" "led_task.obj" "startup_ccs.obj" "utils\uartstdio.obj" "utils\ustdlib.obj" "utils\utils.obj" "third_party\FreeRTOS\Source\list.obj" "third_party\FreeRTOS\Source\queue.obj" "third_party\FreeRTOS\Source\tasks.obj" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.obj" "sensors\sensors.obj" "mathlib\mathlib.obj" "mathlib\quaternion.obj" "estimation\estimation.obj" "drivers\buttons.obj" "drivers\rgb.obj" "driverlib\gpio.obj" "driverlib\i2c.obj" "driverlib\interrupt.obj" "driverlib\sysctl.obj" "driverlib\timer.obj" "driverlib\uart.obj" "control\RC.obj" "control\control.obj" "control\effectors.obj" "control\integrator.obj" "comm\I2C1.obj" "comm\UART0.obj" "comm\UART1.obj" "comm\UART5.obj" "comm\comm.obj" 
 	-$(RM) "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.pp" 
 	-@echo 'Finished clean'
 	-@echo ' '

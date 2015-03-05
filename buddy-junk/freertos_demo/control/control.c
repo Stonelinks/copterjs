@@ -14,7 +14,7 @@ xSemaphoreHandle sh_EdgeActive;
 
 extern tINSstate INS;
 extern tRCinput RCin;
-
+extern uint8_t serialCharsInput[5];
 
 void init_control(){
 
@@ -78,10 +78,32 @@ void AttitudeControl( float dt ){
 
 	static float rollCmd, pitchCmd, yawRateCmd;
 	static float rollErr, pitchErr, yawRateErr;
+
+/*
 	rollCmd = -RCin.chan[0] * controlParam.RC_rollpitch_scale;
 	pitchCmd = -RCin.chan[1] * controlParam.RC_rollpitch_scale;
 	yawRateCmd = -RCin.chan[3] * controlParam.RC_yawrate_scale;
+*/
 	effectors.thrust = (RCin.chan[2]+1.0) / 2.0;
+
+	float maxAtt_rad = 0.52;// 0.52 rad = 30deg
+	float maxAttRate_rad = 0.78;// 0.78 rad = 45deg
+
+	float rollIn = (float)serialCharsInput[1];
+	rollIn -= 127.0;
+	rollIn = -rollIn /127.0*maxAtt_rad;
+	rollCmd = satf( rollIn ,-maxAtt_rad, maxAtt_rad);
+
+	float pitchIn = (float)serialCharsInput[2];
+	pitchIn -= 127.0;
+	pitchIn = pitchIn /127.0*maxAtt_rad;
+	pitchCmd = satf( pitchIn ,-maxAtt_rad, maxAtt_rad);
+
+	float yawRateIn = (float)serialCharsInput[3];
+	yawRateIn -= 127.0;
+	yawRateIn = -yawRateIn /127.0*maxAttRate_rad;
+	yawRateCmd = satf( yawRateIn ,-maxAttRate_rad, maxAttRate_rad);
+
 
 	rollErr = rollCmd - INS.roll;
 	pitchErr = pitchCmd - INS.pitch;

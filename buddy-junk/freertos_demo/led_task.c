@@ -49,7 +49,7 @@
 
 
 extern xSemaphoreHandle g_pUARTSemaphore;
-
+extern uint8_t serialCharsInput[5];
 //*****************************************************************************
 //
 // This task toggles the user selected LED at a user selected frequency. User
@@ -65,7 +65,7 @@ LEDTask(void *pvParameters)
     //
     // Loop forever.
     //
-
+    int cnt = 0;
     while(1)
     {
     	//
@@ -74,8 +74,13 @@ LEDTask(void *pvParameters)
 		ulWakeTime = xTaskGetTickCount();
 
         debug_printsensors();
-        //debug_printINS();
-        //UARTprintf("\n\n");
+        cnt++;
+        if ( cnt%2 == 0)
+        {
+        	debug_printINS();
+        	//UARTprintf("%d,%d,%d,%d\n",serialCharsInput[0],serialCharsInput[1],serialCharsInput[2],serialCharsInput[3] );
+        }
+
 
         // LED off
         LED_set(LED_RED, 0);
@@ -83,14 +88,14 @@ LEDTask(void *pvParameters)
         //
         // Wait for the required amount of time.
         //
-        vTaskDelayUntil(&ulWakeTime, 1 * portTICKS_PER_MS);
+        vTaskDelayUntil(&ulWakeTime, 5 * portTICKS_PER_MS);
 
         // LED on
         LED_set(LED_RED, 1);
         //
         // Wait for the required amount of time.
         //
-        vTaskDelayUntil(&ulWakeTime, 1 * portTICKS_PER_MS);
+        vTaskDelayUntil(&ulWakeTime, 5 * portTICKS_PER_MS);
     }
 }
 

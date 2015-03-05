@@ -28,3 +28,4 @@ void UART0_init(){
     //
     g_pUARTSemaphore = xSemaphoreCreateMutex();
 }
+

@@ -4,6 +4,7 @@ void init_comm(){
 
 	I2C1_init(true); // Initialize I2C1 in fast mode (400 kbps)
 	UART0_init(); // Initialize UART0 (debug serial output)
+	UART1_init(); // Initialize UART1 (aux serial output)
 	UART5_init(); // Initialize UART5 (sbus input)
 
 }

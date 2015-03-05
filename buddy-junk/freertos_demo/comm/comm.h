@@ -34,8 +34,11 @@ char* ftoa(float f);
 
 // ##### UART Library ##### //
 void UART0_init();
+void UART1_init();
 void UART5_init();
 void UART5IntHandler(void);
+
+void UART1IntHandler(void);
 
 
 // ##### I2C Library ##### //

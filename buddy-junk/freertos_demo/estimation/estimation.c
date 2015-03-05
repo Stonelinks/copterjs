@@ -235,14 +235,16 @@ extern float m1,m2,m3,m4;
 void debug_printINS(){
 	static float roll, pitch, yaw;
 
-	//q2Euler(&INS.att, &roll, &pitch, &yaw, true);
+	q2Euler(&INS.att, &roll, &pitch, &yaw, false);
 
 	//UARTprintf("roll: %s ", ftoa(roll));
 	//UARTprintf("pitch: %s ", ftoa(pitch));
 	//UARTprintf("yaw: %s \n", ftoa(yaw));
 
 	//q2Euler(&att_accel, &roll, &pitch, &yaw, true);
-
+	int roll_int = (int)(roll*100.0);
+	int pitch_int = (int)(pitch*100.0);
+	UARTprintf("a,%d,%d\n", roll_int,pitch_int);
 	//UARTprintf("a_roll: %s ", ftoa(roll));
 	//UARTprintf("a_pitch: %s \n", ftoa(pitch));
 

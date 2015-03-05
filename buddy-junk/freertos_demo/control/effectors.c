@@ -53,10 +53,10 @@ void EffectorSet_QuadPWM( tEffectorSetpoint *effectors){
 	}else{
 
 #ifdef BUDDYQUAD
-		m1 = satf( effectors->thrust - effectors->pitch + effectors->roll - effectors->yaw, 0.1, 1.0);
-		m2 = satf( effectors->thrust + effectors->pitch - effectors->roll - effectors->yaw,  0.1, 1.0);
-		m3 = satf( effectors->thrust + effectors->pitch + effectors->roll + effectors->yaw, 0.1, 1.0);
-		m4 = satf( effectors->thrust - effectors->pitch - effectors->roll + effectors->yaw,  0.1, 1.0);
+		m1 = satf( effectors->thrust - effectors->pitch - effectors->roll - effectors->yaw, 0.1, 1.0);
+		m2 = satf( effectors->thrust + effectors->pitch + effectors->roll - effectors->yaw,  0.1, 1.0);
+		m3 = satf( effectors->thrust - effectors->pitch + effectors->roll + effectors->yaw, 0.1, 1.0);
+		m4 = satf( effectors->thrust + effectors->pitch - effectors->roll + effectors->yaw,  0.1, 1.0);
 #endif
 
 #ifdef MINIQUAD
