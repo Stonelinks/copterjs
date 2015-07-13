@@ -47,28 +47,28 @@ function CopterService() {
     m2: 127,
     m3: 127,
     m4: 127
-  }
+  };
 }
 
 CopterService.prototype.start = function() {
 
   this.client = this.setupMqtt({
-		'vehicle/controls': this.updateControls.bind(this)
+    'vehicle/controls': this.updateControls.bind(this)
   });
 
   this.startControlsLog();
 
-	this.launchpad = new Launchpad();
+  this.launchpad = new Launchpad();
 
-  this.motorController = new MotorController()
-  this.motorController.pitchGains = motorControllerGains
-  this.motorController.rollGains = motorControllerGains
-  this.motorController.yawRange = Math.PI / 6.0
-  this.motorController.dt = timing.motorControllerInterval
+  this.motorController = new MotorController();
+  this.motorController.pitchGains = motorControllerGains;
+  this.motorController.rollGains = motorControllerGains;
+  this.motorController.yawRange = Math.PI / 6.0;
+  this.motorController.dt = timing.motorControllerInterval;
 
-	if (this.launchpad.serial && !forceUseFakeData) {
+  if (this.launchpad.serial && !forceUseFakeData) {
     this.startLaunchpadListener();
-    this.startMotorController()
+    this.startMotorController();
     this.startLaunchpadWriter();
   }
  else {
@@ -79,13 +79,13 @@ CopterService.prototype.start = function() {
 };
 
 CopterService.prototype.setupMqtt = function(topics) {
-	console.log('setting up mqtt');
-	var client = mqtt.connect('mqtt://localhost:1883');
+  console.log('setting up mqtt');
+  var client = mqtt.connect('mqtt://localhost:1883');
 
-	for (var topic in topics) {
-		client.subscribe(topic);
-	}
-	client.publish('vehicle/sensor/accel', {x: Math.random(), y: Math.random(), z: Math.random()});
+  for (var topic in topics) {
+    client.subscribe(topic);
+  }
+  client.publish('vehicle/sensor/accel', {x: Math.random(), y: Math.random(), z: Math.random()});
 
   client.on('message', function(topic, payload) {
     if (topics[topic]) {
@@ -97,9 +97,9 @@ CopterService.prototype.setupMqtt = function(topics) {
       }
       topics[topic].call(this, data);
     }
-	}.bind(this));
+  }.bind(this));
 
-	return client;
+  return client;
 };
 
 CopterService.prototype.updateControls = function(controls) {
@@ -121,15 +121,15 @@ CopterService.prototype.publish = function(data) {
 };
 
 CopterService.prototype.onSensorData = function(data) {
-  this.gyro = data.gyro
-  this.accel = data.accel
-  this.publishSensorData()
-}
+  this.gyro = data.gyro;
+  this.accel = data.accel;
+  this.publishSensorData();
+};
 
 CopterService.prototype.onAttitudeData = function(data) {
-  this.attitude = data.attitude
-  this.publishAttitudeData()
-}
+  this.attitude = data.attitude;
+  this.publishAttitudeData();
+};
 
 CopterService.prototype.publishSensorData = _.throttle(function() {
   this.publish({
@@ -148,8 +148,8 @@ CopterService.prototype.startControlsLog = function() {
   setInterval(function() {
     console.log(this.controlInput);
     this.publish({
-    	'vehicle/log/trace' : this.controlInput
-    })
+      'vehicle/log/trace' : this.controlInput
+    });
   }.bind(this), timing.controlsLogInterval);
 };
 
@@ -157,8 +157,8 @@ CopterService.prototype.startMotorLog = function() {
   setInterval(function() {
     console.log(this.controlInput);
     this.publish({
-    	'vehicle/log/trace' : this.controlInput
-    })
+      'vehicle/log/trace' : this.controlInput
+    });
   }.bind(this), timing.controlsLogInterval);
 };
 
@@ -181,17 +181,17 @@ CopterService.prototype.startLaunchpadWriter = function() {
 };
 
 CopterService.prototype.startMotorController = function() {
-  this.motorController.start()
+  this.motorController.start();
   setInterval(function() {
-    this.motorOutput = this.motorController.getMotorOutput(this.attitude, this.controlInput)
+    this.motorOutput = this.motorController.getMotorOutput(this.attitude, this.controlInput);
   }.bind(this), timing.motorControllerInterval);
 };
 
 CopterService.prototype.startGenerateFakeData = function() {
-  var t = 0
-  
+  var t = 0;
+
   setInterval(function() {
-    t++
+    t++;
     var fakeData = {
       raw: 'raw data',
       gyro: {
