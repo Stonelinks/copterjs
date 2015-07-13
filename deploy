@@ -3,4 +3,7 @@ source environment
 npm i
 gulp build
 rsync -avz --rsh="ssh -i id_rsa" --exclude 'node_modules' --exclude '.git' . ssh -i id_rsa ${USER_NAME}@${IP_ADDR}:/root/copterjs
+ssh -i id_rsa ${USER_NAME}@${IP_ADDR} /bin/bash << EOF
+cd /root/copterjs && npm i
+EOF
 ./restart
